@@ -1,52 +1,50 @@
 {
-  "hash": "91f08a66",
-  "configHash": "18f486bc",
-  "lockfileHash": "173ad13c",
-  "browserHash": "1d5f82ef",
+  "hash": "7203e03b",
+  "browserHash": "f7664fe9",
   "optimized": {
     "@angular/common": {
       "src": "../../../../../node_modules/@angular/common/fesm2022/common.mjs",
       "file": "@angular_common.js",
-      "fileHash": "23f88e12",
-      "needsInterop": false
-    },
-    "@angular/core": {
-      "src": "../../../../../node_modules/@angular/core/fesm2022/core.mjs",
-      "file": "@angular_core.js",
-      "fileHash": "aff15830",
-      "needsInterop": false
-    },
-    "@angular/platform-browser": {
-      "src": "../../../../../node_modules/@angular/platform-browser/fesm2022/platform-browser.mjs",
-      "file": "@angular_platform-browser.js",
-      "fileHash": "c3c636ac",
-      "needsInterop": false
-    },
-    "@angular/platform-browser/animations": {
-      "src": "../../../../../node_modules/@angular/platform-browser/fesm2022/animations.mjs",
-      "file": "@angular_platform-browser_animations.js",
-      "fileHash": "1f5c1bde",
+      "fileHash": "35363ec7",
       "needsInterop": false
     },
     "@angular/common/http": {
       "src": "../../../../../node_modules/@angular/common/fesm2022/http.mjs",
       "file": "@angular_common_http.js",
-      "fileHash": "47a60441",
+      "fileHash": "cf45b6d5",
+      "needsInterop": false
+    },
+    "@angular/core": {
+      "src": "../../../../../node_modules/@angular/core/fesm2022/core.mjs",
+      "file": "@angular_core.js",
+      "fileHash": "36ea93c2",
+      "needsInterop": false
+    },
+    "@angular/platform-browser": {
+      "src": "../../../../../node_modules/@angular/platform-browser/fesm2022/platform-browser.mjs",
+      "file": "@angular_platform-browser.js",
+      "fileHash": "c1978945",
+      "needsInterop": false
+    },
+    "@angular/platform-browser/animations": {
+      "src": "../../../../../node_modules/@angular/platform-browser/fesm2022/animations.mjs",
+      "file": "@angular_platform-browser_animations.js",
+      "fileHash": "191c6a78",
       "needsInterop": false
     }
   },
   "chunks": {
-    "chunk-AW6JNZ6L": {
-      "file": "chunk-AW6JNZ6L.js"
+    "chunk-F56WFJ7D": {
+      "file": "chunk-F56WFJ7D.js"
     },
-    "chunk-VUP2PXUD": {
-      "file": "chunk-VUP2PXUD.js"
+    "chunk-RTBYHNJW": {
+      "file": "chunk-RTBYHNJW.js"
     },
-    "chunk-6LHSR5IT": {
-      "file": "chunk-6LHSR5IT.js"
+    "chunk-2AWWMUX4": {
+      "file": "chunk-2AWWMUX4.js"
     },
-    "chunk-GILJNNX3": {
-      "file": "chunk-GILJNNX3.js"
+    "chunk-VKPYIMGK": {
+      "file": "chunk-VKPYIMGK.js"
     }
   }
 }

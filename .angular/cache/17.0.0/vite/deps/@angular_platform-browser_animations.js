@@ -1,14 +1,14 @@
 import {
   BrowserModule,
   DomRendererFactory2
-} from "./chunk-AW6JNZ6L.js";
-import "./chunk-VUP2PXUD.js";
+} from "./chunk-F56WFJ7D.js";
+import "./chunk-RTBYHNJW.js";
 import {
   DOCUMENT
-} from "./chunk-6LHSR5IT.js";
+} from "./chunk-2AWWMUX4.js";
 import {
   ANIMATION_MODULE_TYPE,
-  ChangeDetectionScheduler,
+  ApplicationRef,
   Inject,
   Injectable,
   NgModule,
@@ -16,45 +16,26 @@ import {
   RendererFactory2,
   RuntimeError,
   ViewEncapsulation$1,
-  __objRest,
-  __spreadValues,
   inject,
-  performanceMarkFeature,
   setClassMetadata,
   ɵɵdefineInjectable,
   ɵɵdefineInjector,
   ɵɵdefineNgModule,
   ɵɵinject
-} from "./chunk-GILJNNX3.js";
+} from "./chunk-VKPYIMGK.js";
 
 // node_modules/@angular/animations/fesm2022/animations.mjs
-var AnimationMetadataType;
-(function(AnimationMetadataType2) {
-  AnimationMetadataType2[AnimationMetadataType2["State"] = 0] = "State";
-  AnimationMetadataType2[AnimationMetadataType2["Transition"] = 1] = "Transition";
-  AnimationMetadataType2[AnimationMetadataType2["Sequence"] = 2] = "Sequence";
-  AnimationMetadataType2[AnimationMetadataType2["Group"] = 3] = "Group";
-  AnimationMetadataType2[AnimationMetadataType2["Animate"] = 4] = "Animate";
-  AnimationMetadataType2[AnimationMetadataType2["Keyframes"] = 5] = "Keyframes";
-  AnimationMetadataType2[AnimationMetadataType2["Style"] = 6] = "Style";
-  AnimationMetadataType2[AnimationMetadataType2["Trigger"] = 7] = "Trigger";
-  AnimationMetadataType2[AnimationMetadataType2["Reference"] = 8] = "Reference";
-  AnimationMetadataType2[AnimationMetadataType2["AnimateChild"] = 9] = "AnimateChild";
-  AnimationMetadataType2[AnimationMetadataType2["AnimateRef"] = 10] = "AnimateRef";
-  AnimationMetadataType2[AnimationMetadataType2["Query"] = 11] = "Query";
-  AnimationMetadataType2[AnimationMetadataType2["Stagger"] = 12] = "Stagger";
-})(AnimationMetadataType || (AnimationMetadataType = {}));
 var AUTO_STYLE = "*";
 function sequence(steps, options = null) {
   return {
-    type: AnimationMetadataType.Sequence,
+    type: 2,
     steps,
     options
   };
 }
 function style(tokens) {
   return {
-    type: AnimationMetadataType.Style,
+    type: 6,
     styles: tokens,
     offset: null
   };
@@ -775,9 +756,11 @@ var NG_TRIGGER_SELECTOR = ".ng-trigger";
 var NG_ANIMATING_CLASSNAME = "ng-animating";
 var NG_ANIMATING_SELECTOR = ".ng-animating";
 function resolveTimingValue(value) {
-  if (typeof value == "number") return value;
+  if (typeof value == "number")
+    return value;
   const matches = value.match(/^(-?[\.\d]+)(m?s)/);
-  if (!matches || matches.length < 2) return 0;
+  if (!matches || matches.length < 2)
+    return 0;
   return _convertTimeValueToMS(parseFloat(matches[1]), matches[2]);
 }
 function _convertTimeValueToMS(value, unit) {
@@ -839,6 +822,20 @@ function parseTimeExpression(exp, errors, allowNegativeValues) {
     easing
   };
 }
+function copyObj(obj, destination = {}) {
+  Object.keys(obj).forEach((prop) => {
+    destination[prop] = obj[prop];
+  });
+  return destination;
+}
+function convertToMap(obj) {
+  const styleMap = /* @__PURE__ */ new Map();
+  Object.keys(obj).forEach((prop) => {
+    const val = obj[prop];
+    styleMap.set(prop, val);
+  });
+  return styleMap;
+}
 function normalizeKeyframes(keyframes) {
   if (!keyframes.length) {
     return [];
@@ -846,7 +843,18 @@ function normalizeKeyframes(keyframes) {
   if (keyframes[0] instanceof Map) {
     return keyframes;
   }
-  return keyframes.map((kf) => new Map(Object.entries(kf)));
+  return keyframes.map((kf) => convertToMap(kf));
+}
+function copyStyles(styles, destination = /* @__PURE__ */ new Map(), backfill) {
+  if (backfill) {
+    for (let [prop, val] of backfill) {
+      destination.set(prop, val);
+    }
+  }
+  for (let [prop, val] of styles) {
+    destination.set(prop, val);
+  }
+  return destination;
 }
 function setStyles(element, styles, formerStyles) {
   styles.forEach((val, prop) => {
@@ -865,7 +873,8 @@ function eraseStyles(element, styles) {
 }
 function normalizeAnimationEntry(steps) {
   if (Array.isArray(steps)) {
-    if (steps.length == 1) return steps[0];
+    if (steps.length == 1)
+      return steps[0];
     return sequence(steps);
   }
   return steps;
@@ -894,7 +903,7 @@ function extractStyleParams(value) {
   return params;
 }
 function interpolateParams(value, params, errors) {
-  const original = `${value}`;
+  const original = value.toString();
   const str = original.replace(PARAM_REGEX, (_, varName) => {
     let localVal = params[varName];
     if (localVal == null) {
@@ -904,6 +913,15 @@ function interpolateParams(value, params, errors) {
     return localVal.toString();
   });
   return str == original ? value : str;
+}
+function iteratorToArray(iterator) {
+  const arr = [];
+  let item = iterator.next();
+  while (!item.done) {
+    arr.push(item.value);
+    item = iterator.next();
+  }
+  return arr;
 }
 var DASH_CASE_REGEXP = /-+([a-z0-9])/g;
 function dashCaseToCamelCase(input) {
@@ -936,31 +954,31 @@ function balancePreviousStylesIntoKeyframes(element, keyframes, previousStyles) 
 }
 function visitDslNode(visitor, node, context) {
   switch (node.type) {
-    case AnimationMetadataType.Trigger:
+    case 7:
       return visitor.visitTrigger(node, context);
-    case AnimationMetadataType.State:
+    case 0:
       return visitor.visitState(node, context);
-    case AnimationMetadataType.Transition:
+    case 1:
       return visitor.visitTransition(node, context);
-    case AnimationMetadataType.Sequence:
+    case 2:
       return visitor.visitSequence(node, context);
-    case AnimationMetadataType.Group:
+    case 3:
       return visitor.visitGroup(node, context);
-    case AnimationMetadataType.Animate:
+    case 4:
       return visitor.visitAnimate(node, context);
-    case AnimationMetadataType.Keyframes:
+    case 5:
       return visitor.visitKeyframes(node, context);
-    case AnimationMetadataType.Style:
+    case 6:
       return visitor.visitStyle(node, context);
-    case AnimationMetadataType.Reference:
+    case 8:
       return visitor.visitReference(node, context);
-    case AnimationMetadataType.AnimateChild:
+    case 9:
       return visitor.visitAnimateChild(node, context);
-    case AnimationMetadataType.AnimateRef:
+    case 10:
       return visitor.visitAnimateRef(node, context);
-    case AnimationMetadataType.Query:
+    case 11:
       return visitor.visitQuery(node, context);
-    case AnimationMetadataType.Stagger:
+    case 12:
       return visitor.visitStagger(node, context);
     default:
       throw invalidNodeType(node.type);
@@ -1108,7 +1126,7 @@ var AnimationAstBuilderVisitor = class {
     }
     metadata.definitions.forEach((def) => {
       this._resetContextStyleTimingState(context);
-      if (def.type == AnimationMetadataType.State) {
+      if (def.type == 0) {
         const stateDef = def;
         const name = stateDef.name;
         name.toString().split(/\s*,\s*/).forEach((n) => {
@@ -1116,7 +1134,7 @@ var AnimationAstBuilderVisitor = class {
           states.push(this.visitState(stateDef, context));
         });
         stateDef.name = name;
-      } else if (def.type == AnimationMetadataType.Transition) {
+      } else if (def.type == 1) {
         const transition = this.visitTransition(def, context);
         queryCount += transition.queryCount;
         depCount += transition.depCount;
@@ -1126,7 +1144,7 @@ var AnimationAstBuilderVisitor = class {
       }
     });
     return {
-      type: AnimationMetadataType.Trigger,
+      type: 7,
       name: metadata.name,
       states,
       transitions,
@@ -1153,11 +1171,12 @@ var AnimationAstBuilderVisitor = class {
         }
       });
       if (missingSubs.size) {
-        context.errors.push(invalidState(metadata.name, [...missingSubs.values()]));
+        const missingSubsArr = iteratorToArray(missingSubs.values());
+        context.errors.push(invalidState(metadata.name, missingSubsArr));
       }
     }
     return {
-      type: AnimationMetadataType.State,
+      type: 0,
       name: metadata.name,
       style: styleAst,
       options: astParams ? {
@@ -1171,7 +1190,7 @@ var AnimationAstBuilderVisitor = class {
     const animation = visitDslNode(this, normalizeAnimationEntry(metadata.animation), context);
     const matchers = parseTransitionExpr(metadata.expr, context.errors);
     return {
-      type: AnimationMetadataType.Transition,
+      type: 1,
       matchers,
       animation,
       queryCount: context.queryCount,
@@ -1181,7 +1200,7 @@ var AnimationAstBuilderVisitor = class {
   }
   visitSequence(metadata, context) {
     return {
-      type: AnimationMetadataType.Sequence,
+      type: 2,
       steps: metadata.steps.map((s) => visitDslNode(this, s, context)),
       options: normalizeAnimationOptions(metadata.options)
     };
@@ -1197,7 +1216,7 @@ var AnimationAstBuilderVisitor = class {
     });
     context.currentTime = furthestTime;
     return {
-      type: AnimationMetadataType.Group,
+      type: 3,
       steps,
       options: normalizeAnimationOptions(metadata.options)
     };
@@ -1207,7 +1226,7 @@ var AnimationAstBuilderVisitor = class {
     context.currentAnimateTimings = timingAst;
     let styleAst;
     let styleMetadata = metadata.styles ? metadata.styles : style({});
-    if (styleMetadata.type == AnimationMetadataType.Keyframes) {
+    if (styleMetadata.type == 5) {
       styleAst = this.visitKeyframes(styleMetadata, context);
     } else {
       let styleMetadata2 = metadata.styles;
@@ -1227,7 +1246,7 @@ var AnimationAstBuilderVisitor = class {
     }
     context.currentAnimateTimings = null;
     return {
-      type: AnimationMetadataType.Animate,
+      type: 4,
       timings: timingAst,
       style: styleAst,
       options: null
@@ -1249,7 +1268,7 @@ var AnimationAstBuilderVisitor = class {
           context.errors.push(invalidStyleValue(styleTuple));
         }
       } else {
-        styles.push(new Map(Object.entries(styleTuple)));
+        styles.push(convertToMap(styleTuple));
       }
     }
     let containsDynamicStyles = false;
@@ -1271,7 +1290,7 @@ var AnimationAstBuilderVisitor = class {
       }
     });
     return {
-      type: AnimationMetadataType.Style,
+      type: 6,
       styles,
       easing: collectedEasing,
       offset: metadata.offset,
@@ -1287,7 +1306,8 @@ var AnimationAstBuilderVisitor = class {
       startTime -= timings.duration + timings.delay;
     }
     ast.styles.forEach((tuple) => {
-      if (typeof tuple === "string") return;
+      if (typeof tuple === "string")
+        return;
       tuple.forEach((value, prop) => {
         if (typeof ngDevMode === "undefined" || ngDevMode) {
           if (!this._driver.validateStyleProperty(prop)) {
@@ -1320,7 +1340,7 @@ var AnimationAstBuilderVisitor = class {
   }
   visitKeyframes(metadata, context) {
     const ast = {
-      type: AnimationMetadataType.Keyframes,
+      type: 5,
       styles: [],
       options: null
     };
@@ -1378,7 +1398,7 @@ var AnimationAstBuilderVisitor = class {
   }
   visitReference(metadata, context) {
     return {
-      type: AnimationMetadataType.Reference,
+      type: 8,
       animation: visitDslNode(this, normalizeAnimationEntry(metadata.animation), context),
       options: normalizeAnimationOptions(metadata.options)
     };
@@ -1386,13 +1406,13 @@ var AnimationAstBuilderVisitor = class {
   visitAnimateChild(metadata, context) {
     context.depCount++;
     return {
-      type: AnimationMetadataType.AnimateChild,
+      type: 9,
       options: normalizeAnimationOptions(metadata.options)
     };
   }
   visitAnimateRef(metadata, context) {
     return {
-      type: AnimationMetadataType.AnimateRef,
+      type: 10,
       animation: this.visitReference(metadata.animation, context),
       options: normalizeAnimationOptions(metadata.options)
     };
@@ -1409,7 +1429,7 @@ var AnimationAstBuilderVisitor = class {
     context.currentQuery = null;
     context.currentQuerySelector = parentSelector;
     return {
-      type: AnimationMetadataType.Query,
+      type: 11,
       selector,
       limit: options.limit || 0,
       optional: !!options.optional,
@@ -1429,7 +1449,7 @@ var AnimationAstBuilderVisitor = class {
       easing: "full"
     } : resolveTiming(metadata.timings, context.errors, true);
     return {
-      type: AnimationMetadataType.Stagger,
+      type: 12,
       animation: visitDslNode(this, normalizeAnimationEntry(metadata.animation), context),
       timings,
       options: null
@@ -1445,7 +1465,7 @@ function normalizeSelector(selector) {
   return [selector, hasAmpersand];
 }
 function normalizeParams(obj) {
-  return obj ? __spreadValues({}, obj) : null;
+  return obj ? copyObj(obj) : null;
 }
 var AnimationAstBuilderContext = class {
   constructor(errors) {
@@ -1463,7 +1483,8 @@ var AnimationAstBuilderContext = class {
   }
 };
 function consumeOffset(styles) {
-  if (typeof styles == "string") return null;
+  if (typeof styles == "string")
+    return null;
   let offset = null;
   if (Array.isArray(styles)) {
     styles.forEach((styleTuple) => {
@@ -1501,7 +1522,7 @@ function constructTimingAst(value, errors) {
 }
 function normalizeAnimationOptions(options) {
   if (options) {
-    options = __spreadValues({}, options);
+    options = copyObj(options);
     if (options["params"]) {
       options["params"] = normalizeParams(options["params"]);
     }
@@ -1646,7 +1667,7 @@ var AnimationTimelineBuilderVisitor = class {
       ctx = context.createSubContext(options);
       ctx.transformIntoNewTimeline();
       if (options.delay != null) {
-        if (ctx.previousNode.type == AnimationMetadataType.Style) {
+        if (ctx.previousNode.type == 6) {
           ctx.currentTimeline.snapshotCurrentStyles();
           ctx.previousNode = DEFAULT_NOOP_PREVIOUS_NODE;
         }
@@ -1701,7 +1722,7 @@ var AnimationTimelineBuilderVisitor = class {
       timeline.snapshotCurrentStyles();
     }
     const style2 = ast.style;
-    if (style2.type == AnimationMetadataType.Keyframes) {
+    if (style2.type == 5) {
       this.visitKeyframes(style2, context);
     } else {
       context.incrementTime(timings.duration);
@@ -1746,7 +1767,7 @@ var AnimationTimelineBuilderVisitor = class {
     const startTime = context.currentTimeline.currentTime;
     const options = ast.options || {};
     const delay = options.delay ? resolveTimingValue(options.delay) : 0;
-    if (delay && (context.previousNode.type === AnimationMetadataType.Style || startTime == 0 && context.currentTimeline.hasCurrentStyleProperties())) {
+    if (delay && (context.previousNode.type === 6 || startTime == 0 && context.currentTimeline.hasCurrentStyleProperties())) {
       context.currentTimeline.snapshotCurrentStyles();
       context.previousNode = DEFAULT_NOOP_PREVIOUS_NODE;
     }
@@ -1828,7 +1849,8 @@ var AnimationTimelineContext = class _AnimationTimelineContext {
     return this.options.params;
   }
   updateOptions(options, skipIfExists) {
-    if (!options) return;
+    if (!options)
+      return;
     const newOptions = options;
     let optionsToUpdate = this.options;
     if (newOptions.duration != null) {
@@ -2034,7 +2056,8 @@ var TimelineBuilder = class _TimelineBuilder {
     }
   }
   applyStylesToKeyframe() {
-    if (this._pendingStyles.size == 0) return;
+    if (this._pendingStyles.size == 0)
+      return;
     this._pendingStyles.forEach((val, prop) => {
       this._currentKeyframe.set(prop, val);
     });
@@ -2076,7 +2099,7 @@ var TimelineBuilder = class _TimelineBuilder {
     const isEmpty = this._keyframes.size === 1 && this.duration === 0;
     let finalKeyframes = [];
     this._keyframes.forEach((keyframe, time) => {
-      const finalKeyframe = new Map([...this._backFill, ...keyframe]);
+      const finalKeyframe = copyStyles(keyframe, /* @__PURE__ */ new Map(), this._backFill);
       finalKeyframe.forEach((value, prop) => {
         if (value === ɵPRE_STYLE) {
           preStyleProps.add(prop);
@@ -2089,8 +2112,8 @@ var TimelineBuilder = class _TimelineBuilder {
       }
       finalKeyframes.push(finalKeyframe);
     });
-    const preProps = [...preStyleProps.values()];
-    const postProps = [...postStyleProps.values()];
+    const preProps = preStyleProps.size ? iteratorToArray(preStyleProps.values()) : [];
+    const postProps = postStyleProps.size ? iteratorToArray(postStyleProps.values()) : [];
     if (isEmpty) {
       const kf0 = finalKeyframes[0];
       const kf1 = new Map(kf0);
@@ -2128,15 +2151,15 @@ var SubTimelineBuilder = class extends TimelineBuilder {
       const newKeyframes = [];
       const totalTime = duration + delay;
       const startingGap = delay / totalTime;
-      const newFirstKeyframe = new Map(keyframes[0]);
+      const newFirstKeyframe = copyStyles(keyframes[0]);
       newFirstKeyframe.set("offset", 0);
       newKeyframes.push(newFirstKeyframe);
-      const oldFirstKeyframe = new Map(keyframes[0]);
+      const oldFirstKeyframe = copyStyles(keyframes[0]);
       oldFirstKeyframe.set("offset", roundOffset(startingGap));
       newKeyframes.push(oldFirstKeyframe);
       const limit = keyframes.length - 1;
       for (let i = 1; i <= limit; i++) {
-        let kf = new Map(keyframes[i]);
+        let kf = copyStyles(keyframes[i]);
         const oldOffset = kf.get("offset");
         const timeAtKeyframe = delay + oldOffset * duration;
         kf.set("offset", roundOffset(timeAtKeyframe / totalTime));
@@ -2159,14 +2182,12 @@ function flattenStyles(input, allStyles) {
   let allProperties;
   input.forEach((token) => {
     if (token === "*") {
-      allProperties ??= allStyles.keys();
+      allProperties = allProperties || allStyles.keys();
       for (let prop of allProperties) {
         styles.set(prop, AUTO_STYLE);
       }
     } else {
-      for (let [prop, val] of token) {
-        styles.set(prop, val);
-      }
+      copyStyles(token, styles);
     }
   });
   return styles;
@@ -2242,7 +2263,8 @@ var AnimationTransitionFactory = class {
     if (typeof ngDevMode === "undefined" || ngDevMode) {
       checkNonAnimatableInTimelines(timelines, this._triggerName, driver);
     }
-    return createTransitionInstruction(element, this._triggerName, currentState, nextState, isRemoval, currentStateStyles, nextStateStyles, timelines, [...queriedElements.values()], preStyleMap, postStyleMap, totalTime);
+    const queriedElementsList = iteratorToArray(queriedElements.values());
+    return createTransitionInstruction(element, this._triggerName, currentState, nextState, isRemoval, currentStateStyles, nextStateStyles, timelines, queriedElementsList, preStyleMap, postStyleMap, totalTime);
   }
 };
 function checkNonAnimatableInTimelines(timelines, triggerName, driver) {
@@ -2285,12 +2307,12 @@ function oneOrMoreTransitionsMatch(matchFns, currentState, nextState, element, p
   return matchFns.some((fn) => fn(currentState, nextState, element, params));
 }
 function applyParamDefaults(userParams, defaults) {
-  const result = __spreadValues({}, defaults);
-  Object.entries(userParams).forEach(([key, value]) => {
-    if (value != null) {
-      result[key] = value;
+  const result = copyObj(defaults);
+  for (const key in userParams) {
+    if (userParams.hasOwnProperty(key) && userParams[key] != null) {
+      result[key] = userParams[key];
     }
-  });
+  }
   return result;
 }
 var AnimationStateStyles = class {
@@ -2301,7 +2323,13 @@ var AnimationStateStyles = class {
   }
   buildStyles(params, errors) {
     const finalStyles = /* @__PURE__ */ new Map();
-    const combinedParams = applyParamDefaults(params, this.defaultParams);
+    const combinedParams = copyObj(this.defaultParams);
+    Object.keys(params).forEach((key) => {
+      const value = params[key];
+      if (value !== null) {
+        combinedParams[key] = value;
+      }
+    });
     this.styles.styles.forEach((value) => {
       if (typeof value !== "string") {
         value.forEach((val, prop) => {
@@ -2352,12 +2380,12 @@ var AnimationTrigger = class {
 function createFallbackTransition(triggerName, states, normalizer) {
   const matchers = [(fromState, toState) => true];
   const animation = {
-    type: AnimationMetadataType.Sequence,
+    type: 2,
     steps: [],
     options: null
   };
   const transition = {
-    type: AnimationMetadataType.Transition,
+    type: 1,
     animation,
     matchers,
     options: null,
@@ -2529,11 +2557,8 @@ var StateValue = class {
     const value = isObj ? input["value"] : input;
     this.value = normalizeTriggerValue(value);
     if (isObj) {
-      const _a = input, {
-        value: value2
-      } = _a, options = __objRest(_a, [
-        "value"
-      ]);
+      const options = copyObj(input);
+      delete options["value"];
       this.options = options;
     } else {
       this.options = {};
@@ -2663,7 +2688,8 @@ var AnimationTransitionNamespace = class {
     let transition = trigger.matchTransition(fromState.value, toState.value, element, toState.params);
     let isFallbackTransition = false;
     if (!transition) {
-      if (!defaultToFallback) return;
+      if (!defaultToFallback)
+        return;
       transition = trigger.fallbackTransition;
       isFallbackTransition = true;
     }
@@ -2721,7 +2747,8 @@ var AnimationTransitionNamespace = class {
   _signalRemovalForInnerTriggers(rootElement, context) {
     const elements = this._engine.driver.query(rootElement, NG_TRIGGER_SELECTOR, true);
     elements.forEach((elm) => {
-      if (elm[REMOVAL_FLAG]) return;
+      if (elm[REMOVAL_FLAG])
+        return;
       const namespaces = this._engine.fetchNamespacesByElement(elm);
       if (namespaces.size) {
         namespaces.forEach((ns) => ns.triggerLeaveAnimation(elm, context, false, true));
@@ -2762,7 +2789,8 @@ var AnimationTransitionNamespace = class {
       const visitedTriggers = /* @__PURE__ */ new Set();
       listeners.forEach((listener) => {
         const triggerName = listener.name;
-        if (visitedTriggers.has(triggerName)) return;
+        if (visitedTriggers.has(triggerName))
+          return;
         visitedTriggers.add(triggerName);
         const trigger = this._triggers.get(triggerName);
         const transition = trigger.fallbackTransition;
@@ -2787,7 +2815,8 @@ var AnimationTransitionNamespace = class {
     if (element.childElementCount) {
       this._signalRemovalForInnerTriggers(element, context);
     }
-    if (this.triggerLeaveAnimation(element, context, true)) return;
+    if (this.triggerLeaveAnimation(element, context, true))
+      return;
     let containsPotentialParentTransition = false;
     if (engine.totalAnimations) {
       const currentPlayers = engine.players.length ? engine.playersByQueriedElement.get(element) : [];
@@ -2823,7 +2852,8 @@ var AnimationTransitionNamespace = class {
     const instructions = [];
     this._queue.forEach((entry) => {
       const player = entry.player;
-      if (player.destroyed) return;
+      if (player.destroyed)
+        return;
       const element = entry.element;
       const listeners = this._elementListeners.get(element);
       if (listeners) {
@@ -2863,11 +2893,10 @@ var TransitionAnimationEngine = class {
   _onRemovalComplete(element, context) {
     this.onRemovalComplete(element, context);
   }
-  constructor(bodyNode, driver, _normalizer, scheduler) {
+  constructor(bodyNode, driver, _normalizer) {
     this.bodyNode = bodyNode;
     this.driver = driver;
     this._normalizer = _normalizer;
-    this.scheduler = scheduler;
     this.players = [];
     this.newHostElements = /* @__PURE__ */ new Map();
     this.playersByElement = /* @__PURE__ */ new Map();
@@ -2947,7 +2976,8 @@ var TransitionAnimationEngine = class {
     }
   }
   destroy(namespaceId, context) {
-    if (!namespaceId) return;
+    if (!namespaceId)
+      return;
     this.afterFlush(() => {
     });
     this.afterFlushAnimationsDone(() => {
@@ -2990,7 +3020,8 @@ var TransitionAnimationEngine = class {
     return false;
   }
   insertNode(namespaceId, element, parent, insertBefore) {
-    if (!isElementNode(element)) return;
+    if (!isElementNode(element))
+      return;
     const details = element[REMOVAL_FLAG];
     if (details && details.setForRemoval) {
       details.setForRemoval = false;
@@ -3026,7 +3057,6 @@ var TransitionAnimationEngine = class {
   }
   removeNode(namespaceId, element, context) {
     if (isElementNode(element)) {
-      this.scheduler?.notify();
       const ns = namespaceId ? this._fetchNamespace(namespaceId) : null;
       if (ns) {
         ns.removeNode(element, context);
@@ -3064,7 +3094,8 @@ var TransitionAnimationEngine = class {
   destroyInnerAnimations(containerElement) {
     let elements = this.driver.query(containerElement, NG_TRIGGER_SELECTOR, true);
     elements.forEach((element) => this.destroyActiveAnimationsForElement(element));
-    if (this.playersByQueriedElement.size == 0) return;
+    if (this.playersByQueriedElement.size == 0)
+      return;
     elements = this.driver.query(containerElement, NG_ANIMATING_SELECTOR, true);
     elements.forEach((element) => this.finishActiveQueriedAnimationOnElement(element));
   }
@@ -3415,7 +3446,8 @@ var TransitionAnimationEngine = class {
       const element = allLeaveNodes[i2];
       const details = element[REMOVAL_FLAG];
       removeClass(element, LEAVE_CLASSNAME);
-      if (details && details.hasAnimation) continue;
+      if (details && details.hasAnimation)
+        continue;
       let players = [];
       if (queriedElements.size) {
         let queriedPlayerResults = queriedElements.get(element);
@@ -3467,16 +3499,20 @@ var TransitionAnimationEngine = class {
       if (elementPlayers) {
         const isRemovalAnimation = !toStateValue || toStateValue == VOID_VALUE;
         elementPlayers.forEach((player) => {
-          if (player.queued) return;
-          if (!isRemovalAnimation && player.triggerName != triggerName) return;
+          if (player.queued)
+            return;
+          if (!isRemovalAnimation && player.triggerName != triggerName)
+            return;
           players.push(player);
         });
       }
     }
     if (namespaceId || triggerName) {
       players = players.filter((player) => {
-        if (namespaceId && namespaceId != player.namespaceId) return false;
-        if (triggerName && triggerName != player.triggerName) return false;
+        if (namespaceId && namespaceId != player.namespaceId)
+          return false;
+        if (triggerName && triggerName != player.triggerName)
+          return false;
         return true;
       });
     }
@@ -3513,7 +3549,8 @@ var TransitionAnimationEngine = class {
       const element = timelineInstruction.element;
       allConsumedElements.add(element);
       const details = element[REMOVAL_FLAG];
-      if (details && details.removedBeforeQueried) return new NoopAnimationPlayer(timelineInstruction.duration, timelineInstruction.delay);
+      if (details && details.removedBeforeQueried)
+        return new NoopAnimationPlayer(timelineInstruction.duration, timelineInstruction.delay);
       const isQueriedElement = element !== rootElement;
       const previousPlayers = flattenGroupPlayers((allPreviousPlayersMap.get(element) || EMPTY_PLAYER_ARRAY).map((p) => p.getRealPlayer())).filter((p) => {
         const pp = p;
@@ -3571,7 +3608,8 @@ var TransitionAnimationPlayer = class {
     this.totalTime = 0;
   }
   setRealPlayer(player) {
-    if (this._containsRealPlayer) return;
+    if (this._containsRealPlayer)
+      return;
     this._player = player;
     this._queuedCallbacks.forEach((callbacks, phase) => {
       callbacks.forEach((callback) => listenOnPlayer(player, phase, void 0, callback));
@@ -3707,14 +3745,17 @@ function cloakAndComputeStyles(valuesMap, driver, elements, elementPropsMap, def
 function buildRootMap(roots, nodes) {
   const rootMap = /* @__PURE__ */ new Map();
   roots.forEach((root) => rootMap.set(root, []));
-  if (nodes.length == 0) return rootMap;
+  if (nodes.length == 0)
+    return rootMap;
   const NULL_NODE = 1;
   const nodeSet = new Set(nodes);
   const localRootMap = /* @__PURE__ */ new Map();
   function getRoot(node) {
-    if (!node) return NULL_NODE;
+    if (!node)
+      return NULL_NODE;
     let root = localRootMap.get(node);
-    if (root) return root;
+    if (root)
+      return root;
     const parent = node.parentNode;
     if (rootMap.has(parent)) {
       root = parent;
@@ -3761,16 +3802,19 @@ function _flattenGroupPlayersRecur(players, finalPlayers) {
 function objEquals(a, b) {
   const k1 = Object.keys(a);
   const k2 = Object.keys(b);
-  if (k1.length != k2.length) return false;
+  if (k1.length != k2.length)
+    return false;
   for (let i = 0; i < k1.length; i++) {
     const prop = k1[i];
-    if (!b.hasOwnProperty(prop) || a[prop] !== b[prop]) return false;
+    if (!b.hasOwnProperty(prop) || a[prop] !== b[prop])
+      return false;
   }
   return true;
 }
 function replacePostStylesAsPre(element, allPreStyleElements, allPostStyleElements) {
   const postEntry = allPostStyleElements.get(element);
-  if (!postEntry) return false;
+  if (!postEntry)
+    return false;
   let preEntry = allPreStyleElements.get(element);
   if (preEntry) {
     postEntry.forEach((data) => preEntry.add(data));
@@ -3781,13 +3825,13 @@ function replacePostStylesAsPre(element, allPreStyleElements, allPostStyleElemen
   return true;
 }
 var AnimationEngine = class {
-  constructor(doc, _driver, _normalizer, scheduler) {
+  constructor(doc, _driver, _normalizer) {
     this._driver = _driver;
     this._normalizer = _normalizer;
     this._triggerCache = {};
     this.onRemovalComplete = (element, context) => {
     };
-    this._transitionEngine = new TransitionAnimationEngine(doc.body, _driver, _normalizer, scheduler);
+    this._transitionEngine = new TransitionAnimationEngine(doc.body, _driver, _normalizer);
     this._timelineEngine = new TimelineAnimationEngine(doc.body, _driver, _normalizer);
     this._transitionEngine.onRemovalComplete = (element, context) => this.onRemovalComplete(element, context);
   }
@@ -3964,7 +4008,8 @@ var WebAnimationsPlayer = class {
     this._preparePlayerBeforeStart();
   }
   _buildPlayer() {
-    if (this._initialized) return;
+    if (this._initialized)
+      return;
     this._initialized = true;
     const keyframes = this.keyframes;
     this.domPlayer = this._triggerWebAnimation(this.element, keyframes, this.options);
@@ -4118,7 +4163,7 @@ var WebAnimationsDriver = class {
     return invokeQuery(element, selector, multi);
   }
   computeStyle(element, prop, defaultValue) {
-    return computeStyle(element, prop);
+    return window.getComputedStyle(element)[prop];
   }
   animate(element, keyframes, duration, delay, easing, previousPlayers = []) {
     const fill = delay == 0 ? "both" : "forwards";
@@ -4137,7 +4182,7 @@ var WebAnimationsDriver = class {
         player.currentSnapshot.forEach((val, prop) => previousStyles.set(prop, val));
       });
     }
-    let _keyframes = normalizeKeyframes(keyframes).map((styles) => new Map(styles));
+    let _keyframes = normalizeKeyframes(keyframes).map((styles) => copyStyles(styles));
     _keyframes = balancePreviousStylesIntoKeyframes(element, _keyframes, previousStyles);
     const specialStyles = packageNonAnimatableStyles(element, _keyframes);
     return new WebAnimationsPlayer(element, _keyframes, playerOptions, specialStyles);
@@ -4382,17 +4427,15 @@ var InjectableAnimationEngine = class _InjectableAnimationEngine extends Animati
   // The `ApplicationRef` is injected here explicitly to force the dependency ordering.
   // Since the `ApplicationRef` should be created earlier before the `AnimationEngine`, they
   // both have `ngOnDestroy` hooks and `flush()` must be called after all views are destroyed.
-  constructor(doc, driver, normalizer) {
-    super(doc, driver, normalizer, inject(ChangeDetectionScheduler, {
-      optional: true
-    }));
+  constructor(doc, driver, normalizer, appRef) {
+    super(doc, driver, normalizer);
   }
   ngOnDestroy() {
     this.flush();
   }
   static {
     this.ɵfac = function InjectableAnimationEngine_Factory(t) {
-      return new (t || _InjectableAnimationEngine)(ɵɵinject(DOCUMENT), ɵɵinject(AnimationDriver), ɵɵinject(AnimationStyleNormalizer));
+      return new (t || _InjectableAnimationEngine)(ɵɵinject(DOCUMENT), ɵɵinject(AnimationDriver), ɵɵinject(AnimationStyleNormalizer), ɵɵinject(ApplicationRef));
     };
   }
   static {
@@ -4415,6 +4458,8 @@ var InjectableAnimationEngine = class _InjectableAnimationEngine extends Animati
     type: AnimationDriver
   }, {
     type: AnimationStyleNormalizer
+  }, {
+    type: ApplicationRef
   }], null);
 })();
 function instantiateDefaultStyleNormalizer() {
@@ -4499,7 +4544,6 @@ var BrowserAnimationsModule = class _BrowserAnimationsModule {
   }], null, null);
 })();
 function provideAnimations() {
-  performanceMarkFeature("NgEagerAnimations");
   return [...BROWSER_ANIMATIONS_PROVIDERS];
 }
 var NoopAnimationsModule = class _NoopAnimationsModule {
@@ -4545,22 +4589,22 @@ export {
 
 @angular/animations/fesm2022/animations.mjs:
   (**
-   * @license Angular v17.3.12
-   * (c) 2010-2024 Google LLC. https://angular.io/
+   * @license Angular v17.0.0
+   * (c) 2010-2022 Google LLC. https://angular.io/
    * License: MIT
    *)
 
 @angular/animations/fesm2022/browser.mjs:
   (**
-   * @license Angular v17.3.12
-   * (c) 2010-2024 Google LLC. https://angular.io/
+   * @license Angular v17.0.0
+   * (c) 2010-2022 Google LLC. https://angular.io/
    * License: MIT
    *)
 
 @angular/platform-browser/fesm2022/animations.mjs:
   (**
-   * @license Angular v17.3.12
-   * (c) 2010-2024 Google LLC. https://angular.io/
+   * @license Angular v17.0.0
+   * (c) 2010-2022 Google LLC. https://angular.io/
    * License: MIT
    *)
 */

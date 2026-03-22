@@ -3,12 +3,13 @@ import {
   XhrFactory,
   isPlatformServer,
   parseCookieValue
-} from "./chunk-6LHSR5IT.js";
+} from "./chunk-2AWWMUX4.js";
 import {
   APP_BOOTSTRAP_LISTENER,
   ApplicationRef,
   Console,
   EnvironmentInjector,
+  InitialRenderPendingTasks,
   Inject,
   Injectable,
   InjectionToken,
@@ -16,7 +17,6 @@ import {
   NgZone,
   Observable,
   PLATFORM_ID,
-  PendingTasks,
   RuntimeError,
   TransferState,
   __async,
@@ -32,8 +32,7 @@ import {
   makeStateKey,
   map,
   of,
-  performanceMarkFeature,
-  runInInjectionContext,
+  performanceMark,
   setClassMetadata,
   switchMap,
   tap,
@@ -43,7 +42,7 @@ import {
   ɵɵdefineInjector,
   ɵɵdefineNgModule,
   ɵɵinject
-} from "./chunk-GILJNNX3.js";
+} from "./chunk-VKPYIMGK.js";
 
 // node_modules/@angular/common/fesm2022/http.mjs
 var HttpHandler = class {
@@ -640,8 +639,12 @@ var HttpRequest = class _HttpRequest {
       }
       this.transferCache = options.transferCache;
     }
-    this.headers ??= new HttpHeaders();
-    this.context ??= new HttpContext();
+    if (!this.headers) {
+      this.headers = new HttpHeaders();
+    }
+    if (!this.context) {
+      this.context = new HttpContext();
+    }
     if (!this.params) {
       this.params = new HttpParams();
       this.urlWithParams = url;
@@ -664,7 +667,7 @@ var HttpRequest = class _HttpRequest {
     if (this.body === null) {
       return null;
     }
-    if (typeof this.body === "string" || isArrayBuffer(this.body) || isBlob(this.body) || isFormData(this.body) || isUrlSearchParams(this.body)) {
+    if (isArrayBuffer(this.body) || isBlob(this.body) || isFormData(this.body) || isUrlSearchParams(this.body) || typeof this.body === "string") {
       return this.body;
     }
     if (this.body instanceof HttpParams) {
@@ -709,10 +712,9 @@ var HttpRequest = class _HttpRequest {
     const method = update.method || this.method;
     const url = update.url || this.url;
     const responseType = update.responseType || this.responseType;
-    const transferCache = update.transferCache ?? this.transferCache;
     const body = update.body !== void 0 ? update.body : this.body;
-    const withCredentials = update.withCredentials ?? this.withCredentials;
-    const reportProgress = update.reportProgress ?? this.reportProgress;
+    const withCredentials = update.withCredentials !== void 0 ? update.withCredentials : this.withCredentials;
+    const reportProgress = update.reportProgress !== void 0 ? update.reportProgress : this.reportProgress;
     let headers = update.headers || this.headers;
     let params = update.params || this.params;
     const context = update.context ?? this.context;
@@ -728,8 +730,7 @@ var HttpRequest = class _HttpRequest {
       context,
       reportProgress,
       responseType,
-      withCredentials,
-      transferCache
+      withCredentials
     });
   }
 };
@@ -749,7 +750,7 @@ var HttpResponseBase = class {
    * The single parameter accepted is an initialization hash. Any properties
    * of the response passed there will override the default values.
    */
-  constructor(init, defaultStatus = HttpStatusCode.Ok, defaultStatusText = "OK") {
+  constructor(init, defaultStatus = 200, defaultStatusText = "OK") {
     this.headers = init.headers || new HttpHeaders();
     this.status = init.status !== void 0 ? init.status : defaultStatus;
     this.statusText = init.statusText || defaultStatusText;
@@ -810,72 +811,6 @@ var HttpErrorResponse = class extends HttpResponseBase {
     this.error = init.error || null;
   }
 };
-var HttpStatusCode;
-(function(HttpStatusCode2) {
-  HttpStatusCode2[HttpStatusCode2["Continue"] = 100] = "Continue";
-  HttpStatusCode2[HttpStatusCode2["SwitchingProtocols"] = 101] = "SwitchingProtocols";
-  HttpStatusCode2[HttpStatusCode2["Processing"] = 102] = "Processing";
-  HttpStatusCode2[HttpStatusCode2["EarlyHints"] = 103] = "EarlyHints";
-  HttpStatusCode2[HttpStatusCode2["Ok"] = 200] = "Ok";
-  HttpStatusCode2[HttpStatusCode2["Created"] = 201] = "Created";
-  HttpStatusCode2[HttpStatusCode2["Accepted"] = 202] = "Accepted";
-  HttpStatusCode2[HttpStatusCode2["NonAuthoritativeInformation"] = 203] = "NonAuthoritativeInformation";
-  HttpStatusCode2[HttpStatusCode2["NoContent"] = 204] = "NoContent";
-  HttpStatusCode2[HttpStatusCode2["ResetContent"] = 205] = "ResetContent";
-  HttpStatusCode2[HttpStatusCode2["PartialContent"] = 206] = "PartialContent";
-  HttpStatusCode2[HttpStatusCode2["MultiStatus"] = 207] = "MultiStatus";
-  HttpStatusCode2[HttpStatusCode2["AlreadyReported"] = 208] = "AlreadyReported";
-  HttpStatusCode2[HttpStatusCode2["ImUsed"] = 226] = "ImUsed";
-  HttpStatusCode2[HttpStatusCode2["MultipleChoices"] = 300] = "MultipleChoices";
-  HttpStatusCode2[HttpStatusCode2["MovedPermanently"] = 301] = "MovedPermanently";
-  HttpStatusCode2[HttpStatusCode2["Found"] = 302] = "Found";
-  HttpStatusCode2[HttpStatusCode2["SeeOther"] = 303] = "SeeOther";
-  HttpStatusCode2[HttpStatusCode2["NotModified"] = 304] = "NotModified";
-  HttpStatusCode2[HttpStatusCode2["UseProxy"] = 305] = "UseProxy";
-  HttpStatusCode2[HttpStatusCode2["Unused"] = 306] = "Unused";
-  HttpStatusCode2[HttpStatusCode2["TemporaryRedirect"] = 307] = "TemporaryRedirect";
-  HttpStatusCode2[HttpStatusCode2["PermanentRedirect"] = 308] = "PermanentRedirect";
-  HttpStatusCode2[HttpStatusCode2["BadRequest"] = 400] = "BadRequest";
-  HttpStatusCode2[HttpStatusCode2["Unauthorized"] = 401] = "Unauthorized";
-  HttpStatusCode2[HttpStatusCode2["PaymentRequired"] = 402] = "PaymentRequired";
-  HttpStatusCode2[HttpStatusCode2["Forbidden"] = 403] = "Forbidden";
-  HttpStatusCode2[HttpStatusCode2["NotFound"] = 404] = "NotFound";
-  HttpStatusCode2[HttpStatusCode2["MethodNotAllowed"] = 405] = "MethodNotAllowed";
-  HttpStatusCode2[HttpStatusCode2["NotAcceptable"] = 406] = "NotAcceptable";
-  HttpStatusCode2[HttpStatusCode2["ProxyAuthenticationRequired"] = 407] = "ProxyAuthenticationRequired";
-  HttpStatusCode2[HttpStatusCode2["RequestTimeout"] = 408] = "RequestTimeout";
-  HttpStatusCode2[HttpStatusCode2["Conflict"] = 409] = "Conflict";
-  HttpStatusCode2[HttpStatusCode2["Gone"] = 410] = "Gone";
-  HttpStatusCode2[HttpStatusCode2["LengthRequired"] = 411] = "LengthRequired";
-  HttpStatusCode2[HttpStatusCode2["PreconditionFailed"] = 412] = "PreconditionFailed";
-  HttpStatusCode2[HttpStatusCode2["PayloadTooLarge"] = 413] = "PayloadTooLarge";
-  HttpStatusCode2[HttpStatusCode2["UriTooLong"] = 414] = "UriTooLong";
-  HttpStatusCode2[HttpStatusCode2["UnsupportedMediaType"] = 415] = "UnsupportedMediaType";
-  HttpStatusCode2[HttpStatusCode2["RangeNotSatisfiable"] = 416] = "RangeNotSatisfiable";
-  HttpStatusCode2[HttpStatusCode2["ExpectationFailed"] = 417] = "ExpectationFailed";
-  HttpStatusCode2[HttpStatusCode2["ImATeapot"] = 418] = "ImATeapot";
-  HttpStatusCode2[HttpStatusCode2["MisdirectedRequest"] = 421] = "MisdirectedRequest";
-  HttpStatusCode2[HttpStatusCode2["UnprocessableEntity"] = 422] = "UnprocessableEntity";
-  HttpStatusCode2[HttpStatusCode2["Locked"] = 423] = "Locked";
-  HttpStatusCode2[HttpStatusCode2["FailedDependency"] = 424] = "FailedDependency";
-  HttpStatusCode2[HttpStatusCode2["TooEarly"] = 425] = "TooEarly";
-  HttpStatusCode2[HttpStatusCode2["UpgradeRequired"] = 426] = "UpgradeRequired";
-  HttpStatusCode2[HttpStatusCode2["PreconditionRequired"] = 428] = "PreconditionRequired";
-  HttpStatusCode2[HttpStatusCode2["TooManyRequests"] = 429] = "TooManyRequests";
-  HttpStatusCode2[HttpStatusCode2["RequestHeaderFieldsTooLarge"] = 431] = "RequestHeaderFieldsTooLarge";
-  HttpStatusCode2[HttpStatusCode2["UnavailableForLegalReasons"] = 451] = "UnavailableForLegalReasons";
-  HttpStatusCode2[HttpStatusCode2["InternalServerError"] = 500] = "InternalServerError";
-  HttpStatusCode2[HttpStatusCode2["NotImplemented"] = 501] = "NotImplemented";
-  HttpStatusCode2[HttpStatusCode2["BadGateway"] = 502] = "BadGateway";
-  HttpStatusCode2[HttpStatusCode2["ServiceUnavailable"] = 503] = "ServiceUnavailable";
-  HttpStatusCode2[HttpStatusCode2["GatewayTimeout"] = 504] = "GatewayTimeout";
-  HttpStatusCode2[HttpStatusCode2["HttpVersionNotSupported"] = 505] = "HttpVersionNotSupported";
-  HttpStatusCode2[HttpStatusCode2["VariantAlsoNegotiates"] = 506] = "VariantAlsoNegotiates";
-  HttpStatusCode2[HttpStatusCode2["InsufficientStorage"] = 507] = "InsufficientStorage";
-  HttpStatusCode2[HttpStatusCode2["LoopDetected"] = 508] = "LoopDetected";
-  HttpStatusCode2[HttpStatusCode2["NotExtended"] = 510] = "NotExtended";
-  HttpStatusCode2[HttpStatusCode2["NetworkAuthenticationRequired"] = 511] = "NetworkAuthenticationRequired";
-})(HttpStatusCode || (HttpStatusCode = {}));
 function addBody(options, body) {
   return {
     body,
@@ -1196,8 +1131,7 @@ var FetchBackend = class _FetchBackend {
         }));
         const chunksAll = this.concatChunks(chunks, receivedLength);
         try {
-          const contentType = response.headers.get("Content-Type") ?? "";
-          body = this.parseBody(request, chunksAll, contentType);
+          body = this.parseBody(request, chunksAll);
         } catch (error) {
           observer.error(new HttpErrorResponse({
             error,
@@ -1210,7 +1144,7 @@ var FetchBackend = class _FetchBackend {
         }
       }
       if (status === 0) {
-        status = body ? HttpStatusCode.Ok : 0;
+        status = body ? 200 : 0;
       }
       const ok = status >= 200 && status < 300;
       if (ok) {
@@ -1233,7 +1167,7 @@ var FetchBackend = class _FetchBackend {
       }
     });
   }
-  parseBody(request, binContent, contentType) {
+  parseBody(request, binContent) {
     switch (request.responseType) {
       case "json":
         const text = new TextDecoder().decode(binContent).replace(XSSI_PREFIX$1, "");
@@ -1241,9 +1175,7 @@ var FetchBackend = class _FetchBackend {
       case "text":
         return new TextDecoder().decode(binContent);
       case "blob":
-        return new Blob([binContent], {
-          type: contentType
-        });
+        return new Blob([binContent]);
       case "arraybuffer":
         return binContent.buffer;
     }
@@ -1308,7 +1240,7 @@ function adaptLegacyInterceptorToChain(chainTailFn, interceptor) {
   });
 }
 function chainedInterceptorFn(chainTailFn, interceptorFn, injector) {
-  return (initialRequest, finalHandlerFn) => runInInjectionContext(injector, () => interceptorFn(initialRequest, (downstreamRequest) => chainTailFn(downstreamRequest, finalHandlerFn)));
+  return (initialRequest, finalHandlerFn) => injector.runInContext(() => interceptorFn(initialRequest, (downstreamRequest) => chainTailFn(downstreamRequest, finalHandlerFn)));
 }
 var HTTP_INTERCEPTORS = new InjectionToken(ngDevMode ? "HTTP_INTERCEPTORS" : "");
 var HTTP_INTERCEPTOR_FNS = new InjectionToken(ngDevMode ? "HTTP_INTERCEPTOR_FNS" : "");
@@ -1323,7 +1255,7 @@ function legacyInterceptorFnFactory() {
       }) ?? [];
       chain = interceptors.reduceRight(adaptLegacyInterceptorToChain, interceptorChainEndFn);
     }
-    const pendingTasks = inject(PendingTasks);
+    const pendingTasks = inject(InitialRenderPendingTasks);
     const taskId = pendingTasks.add();
     return chain(req, handler).pipe(finalize(() => pendingTasks.remove(taskId)));
   };
@@ -1335,7 +1267,7 @@ var HttpInterceptorHandler = class _HttpInterceptorHandler extends HttpHandler {
     this.backend = backend;
     this.injector = injector;
     this.chain = null;
-    this.pendingTasks = inject(PendingTasks);
+    this.pendingTasks = inject(InitialRenderPendingTasks);
     const primaryHttpBackend = inject(PRIMARY_HTTP_BACKEND, {
       optional: true
     });
@@ -1450,7 +1382,7 @@ var JsonpClientBackend = class _JsonpClientBackend {
           }
           observer.next(new HttpResponse({
             body,
-            status: HttpStatusCode.Ok,
+            status: 200,
             statusText: "OK",
             url
           }));
@@ -1481,7 +1413,9 @@ var JsonpClientBackend = class _JsonpClientBackend {
     });
   }
   removeListeners(script) {
-    foreignDocument ??= this.document.implementation.createHTMLDocument();
+    if (!foreignDocument) {
+      foreignDocument = this.document.implementation.createHTMLDocument();
+    }
     foreignDocument.adoptNode(script);
   }
   static {
@@ -1527,7 +1461,7 @@ var JsonpInterceptor = class _JsonpInterceptor {
    * @returns An observable of the event stream.
    */
   intercept(initialRequest, next) {
-    return runInInjectionContext(this.injector, () => jsonpInterceptorFn(initialRequest, (downstreamRequest) => next.handle(downstreamRequest)));
+    return this.injector.runInContext(() => jsonpInterceptorFn(initialRequest, (downstreamRequest) => next.handle(downstreamRequest)));
   }
   static {
     this.ɵfac = function JsonpInterceptor_Factory(t) {
@@ -1619,11 +1553,11 @@ var HttpXhrBackend = class _HttpXhrBackend {
             url
           } = partialFromXhr();
           let body = null;
-          if (status !== HttpStatusCode.NoContent) {
+          if (status !== 204) {
             body = typeof xhr.response === "undefined" ? xhr.responseText : xhr.response;
           }
           if (status === 0) {
-            status = !!body ? HttpStatusCode.Ok : 0;
+            status = !!body ? 200 : 0;
           }
           let ok = status >= 200 && status < 300;
           if (req.responseType === "json" && typeof body === "string") {
@@ -1753,14 +1687,14 @@ var HttpXhrBackend = class _HttpXhrBackend {
     type: XhrFactory
   }], null);
 })();
-var XSRF_ENABLED = new InjectionToken(ngDevMode ? "XSRF_ENABLED" : "");
+var XSRF_ENABLED = new InjectionToken("XSRF_ENABLED");
 var XSRF_DEFAULT_COOKIE_NAME = "XSRF-TOKEN";
-var XSRF_COOKIE_NAME = new InjectionToken(ngDevMode ? "XSRF_COOKIE_NAME" : "", {
+var XSRF_COOKIE_NAME = new InjectionToken("XSRF_COOKIE_NAME", {
   providedIn: "root",
   factory: () => XSRF_DEFAULT_COOKIE_NAME
 });
 var XSRF_DEFAULT_HEADER_NAME = "X-XSRF-TOKEN";
-var XSRF_HEADER_NAME = new InjectionToken(ngDevMode ? "XSRF_HEADER_NAME" : "", {
+var XSRF_HEADER_NAME = new InjectionToken("XSRF_HEADER_NAME", {
   providedIn: "root",
   factory: () => XSRF_DEFAULT_HEADER_NAME
 });
@@ -1841,7 +1775,7 @@ var HttpXsrfInterceptor = class _HttpXsrfInterceptor {
     this.injector = injector;
   }
   intercept(initialRequest, next) {
-    return runInInjectionContext(this.injector, () => xsrfInterceptorFn(initialRequest, (downstreamRequest) => next.handle(downstreamRequest)));
+    return this.injector.runInContext(() => xsrfInterceptorFn(initialRequest, (downstreamRequest) => next.handle(downstreamRequest)));
   }
   static {
     this.ɵfac = function HttpXsrfInterceptor_Factory(t) {
@@ -1916,7 +1850,7 @@ function withInterceptors(interceptorFns) {
     };
   }));
 }
-var LEGACY_INTERCEPTOR_FN = new InjectionToken(ngDevMode ? "LEGACY_INTERCEPTOR_FN" : "");
+var LEGACY_INTERCEPTOR_FN = new InjectionToken("LEGACY_INTERCEPTOR_FN");
 function withInterceptorsFromDi() {
   return makeHttpFeature(HttpFeatureKind.LegacyInterceptors, [{
     provide: LEGACY_INTERCEPTOR_FN,
@@ -2177,9 +2111,8 @@ function transferCacheInterceptorFn(req, next) {
       url
     }));
   }
-  const isServer = isPlatformServer(inject(PLATFORM_ID));
   return next(req).pipe(tap((event) => {
-    if (event instanceof HttpResponse && isServer) {
+    if (event instanceof HttpResponse) {
       transferState.set(storeKey, {
         [BODY]: event.body,
         [HEADERS]: getFilteredHeaders(event.headers, headersToInclude),
@@ -2204,9 +2137,6 @@ function getFilteredHeaders(headers, includeHeaders) {
   }
   return headersMap;
 }
-function sortAndConcatParams(params) {
-  return [...params.keys()].sort().map((k) => `${k}=${params.getAll(k)}`).join("&");
-}
 function makeCacheKey(request) {
   const {
     params,
@@ -2214,14 +2144,8 @@ function makeCacheKey(request) {
     responseType,
     url
   } = request;
-  const encodedParams = sortAndConcatParams(params);
-  let serializedBody = request.serializeBody();
-  if (serializedBody instanceof URLSearchParams) {
-    serializedBody = sortAndConcatParams(serializedBody);
-  } else if (typeof serializedBody !== "string") {
-    serializedBody = "";
-  }
-  const key = [method, responseType, url, serializedBody, encodedParams].join("|");
+  const encodedParams = params.keys().sort().map((k) => `${k}=${params.getAll(k)}`).join("&");
+  const key = method + "." + responseType + "." + url + "?" + encodedParams;
   const hash = generateHash(key);
   return makeStateKey(hash);
 }
@@ -2237,7 +2161,11 @@ function withHttpTransferCache(cacheOptions) {
   return [{
     provide: CACHE_OPTIONS,
     useFactory: () => {
-      performanceMarkFeature("NgHttpTransferCache");
+      performanceMark("mark_use_counter", {
+        detail: {
+          feature: "NgHttpTransferCache"
+        }
+      });
       return __spreadValues({
         isCacheActive: true
       }, cacheOptions);
@@ -2297,7 +2225,6 @@ export {
   HttpHeaderResponse,
   HttpResponse,
   HttpErrorResponse,
-  HttpStatusCode,
   HttpClient,
   FetchBackend,
   HTTP_INTERCEPTORS,
@@ -2326,9 +2253,9 @@ export {
 
 @angular/common/fesm2022/http.mjs:
   (**
-   * @license Angular v17.3.12
-   * (c) 2010-2024 Google LLC. https://angular.io/
+   * @license Angular v17.0.0
+   * (c) 2010-2022 Google LLC. https://angular.io/
    * License: MIT
    *)
 */
-//# sourceMappingURL=chunk-VUP2PXUD.js.map
+//# sourceMappingURL=chunk-RTBYHNJW.js.map

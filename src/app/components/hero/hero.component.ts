@@ -5,7 +5,7 @@ import { AnalyticsService } from '../../services/analytics.service';
   selector: 'app-hero',
   standalone: true,
   template: `
-    <section id="hero" class="hero" style="background-image:url('assets/imgs/8ab312c23624e8532d8f21bf366893fe3bf6de41.png')">
+    <section id="hero" class="hero" style="background-image:url('assets/imgs/8ab312c23624e8532d8f21bf366893fe3bf6de41.jpeg')">
       <div class="hero-overlay"></div>
       <div class="container hero-content">
         <h1 class="hero-title">¡Tu lote te espera!</h1>

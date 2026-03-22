@@ -1,6 +1,6 @@
 import {
   withHttpTransferCache
-} from "./chunk-VUP2PXUD.js";
+} from "./chunk-RTBYHNJW.js";
 import {
   CommonModule,
   DOCUMENT,
@@ -11,7 +11,7 @@ import {
   isPlatformServer,
   parseCookieValue,
   setRootDomAdapter
-} from "./chunk-6LHSR5IT.js";
+} from "./chunk-2AWWMUX4.js";
 import {
   APP_ID,
   ApplicationModule,
@@ -24,6 +24,7 @@ import {
   Inject,
   Injectable,
   InjectionToken,
+  Injector,
   NgModule,
   NgZone,
   Optional,
@@ -69,7 +70,7 @@ import {
   ɵɵdefineInjector,
   ɵɵdefineNgModule,
   ɵɵinject
-} from "./chunk-GILJNNX3.js";
+} from "./chunk-VKPYIMGK.js";
 
 // node_modules/@angular/platform-browser/fesm2022/platform-browser.mjs
 var GenericBrowserDomAdapter = class extends DomAdapter {
@@ -144,8 +145,12 @@ function getBaseElementHref() {
   baseElement = baseElement || document.querySelector("base");
   return baseElement ? baseElement.getAttribute("href") : null;
 }
+var urlParsingNode;
 function relativePath(url) {
-  return new URL(url, document.baseURI).pathname;
+  urlParsingNode = urlParsingNode || document.createElement("a");
+  urlParsingNode.setAttribute("href", url);
+  const pathName = urlParsingNode.pathname;
+  return pathName.charAt(0) === "/" ? pathName : `/${pathName}`;
 }
 var BrowserGetTestability = class {
   addToWindow(registry) {
@@ -161,10 +166,12 @@ var BrowserGetTestability = class {
     const whenAllStable = (callback) => {
       const testabilities = _global["getAllAngularTestabilities"]();
       let count = testabilities.length;
-      const decrement = function() {
+      let didWork = false;
+      const decrement = function(didWork_) {
+        didWork = didWork || didWork_;
         count--;
         if (count == 0) {
-          callback();
+          callback(didWork);
         }
       };
       testabilities.forEach((testability) => {
@@ -213,7 +220,7 @@ var BrowserXhr = class _BrowserXhr {
     type: Injectable
   }], null, null);
 })();
-var EVENT_MANAGER_PLUGINS = new InjectionToken(ngDevMode ? "EventManagerPlugins" : "");
+var EVENT_MANAGER_PLUGINS = new InjectionToken("EventManagerPlugins");
 var EventManager = class _EventManager {
   /**
    * Initializes an instance of the event-manager service.
@@ -475,7 +482,7 @@ var COMPONENT_VARIABLE = "%COMP%";
 var HOST_ATTR = `_nghost-${COMPONENT_VARIABLE}`;
 var CONTENT_ATTR = `_ngcontent-${COMPONENT_VARIABLE}`;
 var REMOVE_STYLES_ON_COMPONENT_DESTROY_DEFAULT = true;
-var REMOVE_STYLES_ON_COMPONENT_DESTROY = new InjectionToken(ngDevMode ? "RemoveStylesOnCompDestroy" : "", {
+var REMOVE_STYLES_ON_COMPONENT_DESTROY = new InjectionToken("RemoveStylesOnCompDestroy", {
   providedIn: "root",
   factory: () => REMOVE_STYLES_ON_COMPONENT_DESTROY_DEFAULT
 });
@@ -700,9 +707,6 @@ var DefaultDomRenderer2 = class {
     }
   }
   setProperty(el, name, value) {
-    if (el == null) {
-      return;
-    }
     (typeof ngDevMode === "undefined" || ngDevMode) && this.throwOnSyntheticProps && checkNoSyntheticProp(name, "property");
     el[name] = value;
   }
@@ -962,7 +966,8 @@ var KeyEventsPlugin = class _KeyEventsPlugin extends EventManagerPlugin {
       keycode = event.code;
       key = "code.";
     }
-    if (keycode == null || !keycode) return false;
+    if (keycode == null || !keycode)
+      return false;
     keycode = keycode.toLowerCase();
     if (keycode === " ") {
       keycode = "space";
@@ -1072,7 +1077,6 @@ var TESTABILITY_PROVIDERS = [{
   deps: [NgZone, TestabilityRegistry, TESTABILITY_GETTER]
 }, {
   provide: Testability,
-  // Also provide as `Testability` for backwards-compatibility.
   useClass: Testability,
   deps: [NgZone, TestabilityRegistry, TESTABILITY_GETTER]
 }];
@@ -1166,6 +1170,9 @@ var BrowserModule = class _BrowserModule {
     }]
   }], null);
 })();
+function createMeta() {
+  return new Meta(ɵɵinject(DOCUMENT));
+}
 var Meta = class _Meta {
   constructor(_doc) {
     this._doc = _doc;
@@ -1182,7 +1189,8 @@ var Meta = class _Meta {
    * the new element if no match is found, or `null` if the tag parameter is not defined.
    */
   addTag(tag, forceCreation = false) {
-    if (!tag) return null;
+    if (!tag)
+      return null;
     return this._getOrCreateElement(tag, forceCreation);
   }
   /**
@@ -1194,7 +1202,8 @@ var Meta = class _Meta {
    * @returns The matching elements if found, or the new elements.
    */
   addTags(tags, forceCreation = false) {
-    if (!tags) return [];
+    if (!tags)
+      return [];
     return tags.reduce((result, tag) => {
       if (tag) {
         result.push(this._getOrCreateElement(tag, forceCreation));
@@ -1209,7 +1218,8 @@ var Meta = class _Meta {
    * @returns The matching element, if any.
    */
   getTag(attrSelector) {
-    if (!attrSelector) return null;
+    if (!attrSelector)
+      return null;
     return this._doc.querySelector(`meta[${attrSelector}]`) || null;
   }
   /**
@@ -1219,7 +1229,8 @@ var Meta = class _Meta {
    * @returns The matching elements, if any.
    */
   getTags(attrSelector) {
-    if (!attrSelector) return [];
+    if (!attrSelector)
+      return [];
     const list = this._doc.querySelectorAll(`meta[${attrSelector}]`);
     return list ? [].slice.call(list) : [];
   }
@@ -1233,7 +1244,8 @@ var Meta = class _Meta {
    * @return The modified element.
    */
   updateTag(tag, selector) {
-    if (!tag) return null;
+    if (!tag)
+      return null;
     selector = selector || this._parseSelector(tag);
     const meta = this.getTag(selector);
     if (meta) {
@@ -1262,7 +1274,8 @@ var Meta = class _Meta {
     if (!forceCreation) {
       const selector = this._parseSelector(meta);
       const elem = this.getTags(selector).filter((elem2) => this._containsAttributes(meta, elem2))[0];
-      if (elem !== void 0) return elem;
+      if (elem !== void 0)
+        return elem;
     }
     const element = this._dom.createElement("meta");
     this._setMetaElementAttributes(meta, element);
@@ -1292,7 +1305,15 @@ var Meta = class _Meta {
   static {
     this.ɵprov = ɵɵdefineInjectable({
       token: _Meta,
-      factory: _Meta.ɵfac,
+      factory: function Meta_Factory(t) {
+        let r = null;
+        if (t) {
+          r = new t();
+        } else {
+          r = createMeta();
+        }
+        return r;
+      },
       providedIn: "root"
     });
   }
@@ -1301,7 +1322,9 @@ var Meta = class _Meta {
   (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(Meta, [{
     type: Injectable,
     args: [{
-      providedIn: "root"
+      providedIn: "root",
+      useFactory: createMeta,
+      deps: []
     }]
   }], () => [{
     type: void 0,
@@ -1314,6 +1337,9 @@ var Meta = class _Meta {
 var META_KEYS_MAP = {
   httpEquiv: "http-equiv"
 };
+function createTitle() {
+  return new Title(ɵɵinject(DOCUMENT));
+}
 var Title = class _Title {
   constructor(_doc) {
     this._doc = _doc;
@@ -1339,7 +1365,15 @@ var Title = class _Title {
   static {
     this.ɵprov = ɵɵdefineInjectable({
       token: _Title,
-      factory: _Title.ɵfac,
+      factory: function Title_Factory(t) {
+        let r = null;
+        if (t) {
+          r = new t();
+        } else {
+          r = createTitle();
+        }
+        return r;
+      },
       providedIn: "root"
     });
   }
@@ -1348,7 +1382,9 @@ var Title = class _Title {
   (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(Title, [{
     type: Injectable,
     args: [{
-      providedIn: "root"
+      providedIn: "root",
+      useFactory: createTitle,
+      deps: []
     }]
   }], () => [{
     type: void 0,
@@ -1364,6 +1400,7 @@ function exportNgVar(name, value) {
     ng[name] = value;
   }
 }
+var win = typeof window !== "undefined" && window || {};
 var ChangeDetectionPerfRecord = class {
   constructor(msPerTick, numTicks) {
     this.msPerTick = msPerTick;
@@ -1394,25 +1431,29 @@ var AngularProfiler = class {
   timeChangeDetection(config) {
     const record = config && config["record"];
     const profileName = "Change Detection";
-    if (record && "profile" in console && typeof console.profile === "function") {
-      console.profile(profileName);
+    const isProfilerAvailable = win.console.profile != null;
+    if (record && isProfilerAvailable) {
+      win.console.profile(profileName);
     }
-    const start = performance.now();
+    const start = performanceNow();
     let numTicks = 0;
-    while (numTicks < 5 || performance.now() - start < 500) {
+    while (numTicks < 5 || performanceNow() - start < 500) {
       this.appRef.tick();
       numTicks++;
     }
-    const end = performance.now();
-    if (record && "profileEnd" in console && typeof console.profileEnd === "function") {
-      console.profileEnd(profileName);
+    const end = performanceNow();
+    if (record && isProfilerAvailable) {
+      win.console.profileEnd(profileName);
     }
     const msPerTick = (end - start) / numTicks;
-    console.log(`ran ${numTicks} change detection cycles`);
-    console.log(`${msPerTick.toFixed(2)} ms per check`);
+    win.console.log(`ran ${numTicks} change detection cycles`);
+    win.console.log(`${msPerTick.toFixed(2)} ms per check`);
     return new ChangeDetectionPerfRecord(msPerTick, numTicks);
   }
 };
+function performanceNow() {
+  return win.performance && win.performance.now ? win.performance.now() : (/* @__PURE__ */ new Date()).getTime();
+}
 var PROFILER_GLOBAL_NAME = "profiler";
 function enableDebugTools(ref) {
   exportNgVar(PROFILER_GLOBAL_NAME, new AngularProfiler(ref));
@@ -1546,10 +1587,10 @@ var HammerGestureConfig = class _HammerGestureConfig {
   }], null, null);
 })();
 var HammerGesturesPlugin = class _HammerGesturesPlugin extends EventManagerPlugin {
-  constructor(doc, _config, console2, loader) {
+  constructor(doc, _config, console, loader) {
     super(doc);
     this._config = _config;
-    this.console = console2;
+    this.console = console;
     this.loader = loader;
     this._loaderPromise = null;
   }
@@ -1729,13 +1770,17 @@ var DomSanitizer = class _DomSanitizer {
     }]
   }], null, null);
 })();
+function domSanitizerImplFactory(injector) {
+  return new DomSanitizerImpl(injector.get(DOCUMENT));
+}
 var DomSanitizerImpl = class _DomSanitizerImpl extends DomSanitizer {
   constructor(_doc) {
     super();
     this._doc = _doc;
   }
   sanitize(ctx, value) {
-    if (value == null) return null;
+    if (value == null)
+      return null;
     switch (ctx) {
       case SecurityContext.NONE:
         return value;
@@ -1811,7 +1856,15 @@ var DomSanitizerImpl = class _DomSanitizerImpl extends DomSanitizer {
   static {
     this.ɵprov = ɵɵdefineInjectable({
       token: _DomSanitizerImpl,
-      factory: _DomSanitizerImpl.ɵfac,
+      factory: function DomSanitizerImpl_Factory(t) {
+        let r = null;
+        if (t) {
+          r = new t();
+        } else {
+          r = domSanitizerImplFactory(ɵɵinject(Injector));
+        }
+        return r;
+      },
       providedIn: "root"
     });
   }
@@ -1820,7 +1873,9 @@ var DomSanitizerImpl = class _DomSanitizerImpl extends DomSanitizer {
   (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(DomSanitizerImpl, [{
     type: Injectable,
     args: [{
-      providedIn: "root"
+      providedIn: "root",
+      useFactory: domSanitizerImplFactory,
+      deps: [Injector]
     }]
   }], () => [{
     type: void 0,
@@ -1830,11 +1885,6 @@ var DomSanitizerImpl = class _DomSanitizerImpl extends DomSanitizer {
     }]
   }], null);
 })();
-var HydrationFeatureKind;
-(function(HydrationFeatureKind2) {
-  HydrationFeatureKind2[HydrationFeatureKind2["NoHttpTransferCache"] = 0] = "NoHttpTransferCache";
-  HydrationFeatureKind2[HydrationFeatureKind2["HttpTransferCacheOptions"] = 1] = "HttpTransferCacheOptions";
-})(HydrationFeatureKind || (HydrationFeatureKind = {}));
 function hydrationFeature(ɵkind, ɵproviders = [], ɵoptions = {}) {
   return {
     ɵkind,
@@ -1842,10 +1892,13 @@ function hydrationFeature(ɵkind, ɵproviders = [], ɵoptions = {}) {
   };
 }
 function withNoHttpTransferCache() {
-  return hydrationFeature(HydrationFeatureKind.NoHttpTransferCache);
+  return hydrationFeature(
+    0
+    /* HydrationFeatureKind.NoHttpTransferCache */
+  );
 }
 function withHttpTransferCacheOptions(options) {
-  return hydrationFeature(HydrationFeatureKind.HttpTransferCacheOptions, withHttpTransferCache(options));
+  return hydrationFeature(1, withHttpTransferCache(options));
 }
 function provideZoneJsCompatibilityDetector() {
   return [{
@@ -1853,9 +1906,9 @@ function provideZoneJsCompatibilityDetector() {
     useValue: () => {
       const ngZone = inject(NgZone);
       if (ngZone.constructor !== NgZone) {
-        const console2 = inject(Console);
+        const console = inject(Console);
         const message = formatRuntimeError(-5e3, "Angular detected that hydration was enabled for an application that uses a custom or a noop Zone.js implementation. This is not yet a fully supported configuration.");
-        console2.warn(message);
+        console.warn(message);
       }
     },
     multi: true
@@ -1864,7 +1917,10 @@ function provideZoneJsCompatibilityDetector() {
 function provideClientHydration(...features) {
   const providers = [];
   const featuresKind = /* @__PURE__ */ new Set();
-  const hasHttpTransferCacheOptions = featuresKind.has(HydrationFeatureKind.HttpTransferCacheOptions);
+  const hasHttpTransferCacheOptions = featuresKind.has(
+    1
+    /* HydrationFeatureKind.HttpTransferCacheOptions */
+  );
   for (const {
     ɵproviders,
     ɵkind
@@ -1874,12 +1930,18 @@ function provideClientHydration(...features) {
       providers.push(ɵproviders);
     }
   }
-  if (typeof ngDevMode !== "undefined" && ngDevMode && featuresKind.has(HydrationFeatureKind.NoHttpTransferCache) && hasHttpTransferCacheOptions) {
+  if (typeof ngDevMode !== "undefined" && ngDevMode && featuresKind.has(
+    0
+    /* HydrationFeatureKind.NoHttpTransferCache */
+  ) && hasHttpTransferCacheOptions) {
     throw new Error("Configuration error: found both withHttpTransferCacheOptions() and withNoHttpTransferCache() in the same call to provideClientHydration(), which is a contradiction.");
   }
-  return makeEnvironmentProviders([typeof ngDevMode !== "undefined" && ngDevMode ? provideZoneJsCompatibilityDetector() : [], withDomHydration(), featuresKind.has(HydrationFeatureKind.NoHttpTransferCache) || hasHttpTransferCacheOptions ? [] : withHttpTransferCache({}), providers]);
+  return makeEnvironmentProviders([typeof ngDevMode !== "undefined" && ngDevMode ? provideZoneJsCompatibilityDetector() : [], withDomHydration(), featuresKind.has(
+    0
+    /* HydrationFeatureKind.NoHttpTransferCache */
+  ) || hasHttpTransferCacheOptions ? [] : withHttpTransferCache({}), providers]);
 }
-var VERSION = new Version("17.3.12");
+var VERSION = new Version("17.0.0");
 var makeStateKey2 = makeStateKey;
 var TransferState2 = TransferState;
 
@@ -1913,7 +1975,6 @@ export {
   HammerModule,
   DomSanitizer,
   DomSanitizerImpl,
-  HydrationFeatureKind,
   withNoHttpTransferCache,
   withHttpTransferCacheOptions,
   provideClientHydration,
@@ -1925,9 +1986,9 @@ export {
 
 @angular/platform-browser/fesm2022/platform-browser.mjs:
   (**
-   * @license Angular v17.3.12
-   * (c) 2010-2024 Google LLC. https://angular.io/
+   * @license Angular v17.0.0
+   * (c) 2010-2022 Google LLC. https://angular.io/
    * License: MIT
    *)
 */
-//# sourceMappingURL=chunk-AW6JNZ6L.js.map
+//# sourceMappingURL=chunk-F56WFJ7D.js.map

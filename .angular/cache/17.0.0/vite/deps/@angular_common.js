@@ -49,7 +49,6 @@ import {
   PathLocationStrategy,
   PercentPipe,
   PlatformLocation,
-  PlatformNavigation,
   Plural,
   SlicePipe,
   TitleCasePipe,
@@ -95,13 +94,12 @@ import {
   provideCloudinaryLoader,
   provideImageKitLoader,
   provideImgixLoader,
-  provideNetlifyLoader,
   registerLocaleData,
   setRootDomAdapter
-} from "./chunk-6LHSR5IT.js";
+} from "./chunk-2AWWMUX4.js";
 import {
   IMAGE_CONFIG
-} from "./chunk-GILJNNX3.js";
+} from "./chunk-VKPYIMGK.js";
 export {
   APP_BASE_HREF,
   AsyncPipe,
@@ -191,7 +189,6 @@ export {
   provideCloudinaryLoader,
   provideImageKitLoader,
   provideImgixLoader,
-  provideNetlifyLoader,
   registerLocaleData,
   DomAdapter as ɵDomAdapter,
   NullViewportScroller as ɵNullViewportScroller,
@@ -199,7 +196,6 @@ export {
   PLATFORM_SERVER_ID as ɵPLATFORM_SERVER_ID,
   PLATFORM_WORKER_APP_ID as ɵPLATFORM_WORKER_APP_ID,
   PLATFORM_WORKER_UI_ID as ɵPLATFORM_WORKER_UI_ID,
-  PlatformNavigation as ɵPlatformNavigation,
   getDOM as ɵgetDOM,
   normalizeQueryParams as ɵnormalizeQueryParams,
   parseCookieValue as ɵparseCookieValue,
