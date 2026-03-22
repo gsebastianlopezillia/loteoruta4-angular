@@ -19,7 +19,7 @@ import { Component } from '@angular/core';
         </div>
         <div class="contact">
           <h4>Contacto</h4>
-          <a href="tel:+5437641653757" class="citem">📞 +54 3764 165357</a>
+          <a href="tel:+5493764165357" class="citem">📞 +54 3764 165357</a>
           <a href="https://maps.app.goo.gl/TRfQusesqEKqRUPG6" target="_blank" class="citem">📍 Ruta Provincial 4, Almafuerte, Misiones</a>
         </div>
       </div>

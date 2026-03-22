@@ -2,7 +2,7 @@ import { Component, HostListener, inject } from '@angular/core';
 import { AnalyticsService } from '../../services/analytics.service';
 import { CommonModule } from '@angular/common';
 
-const WA = 'https://wa.me/5437641653757';
+const WA = 'https://wa.me/5493764165357';
 
 @Component({
   selector: 'app-navbar',

@@ -21,7 +21,7 @@ import { CommonModule } from '@angular/common';
         </div>
         <div class="footer-cta">
           <p>¿Tenés más preguntas? Contactanos directamente</p>
-          <a href="https://wa.me/5437641653757" target="_blank" class="btn-green">📞 Consultar por WhatsApp</a>
+          <a href="https://wa.me/5493764165357" target="_blank" class="btn-green">📞 Consultar por WhatsApp</a>
         </div>
       </div>
     </section>

@@ -31,7 +31,7 @@ import { CommonModule } from '@angular/common';
         <div class="cta-box">
           <h2 class="section-title">¿Listo para una <span class="green">buena inversión</span>?</h2>
           <p class="section-subtitle">Consultá disponibilidad ahora</p>
-          <a href="https://wa.me/5437641653757" target="_blank" class="btn-green cta-btn">📞 Reservar mi lote</a>
+          <a href="https://wa.me/5493764165357" target="_blank" class="btn-green cta-btn">📞 Reservar mi lote</a>
         </div>
       </div>
     </section>

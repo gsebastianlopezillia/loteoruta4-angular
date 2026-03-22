@@ -25,7 +25,7 @@ import { CommonModule } from '@angular/common';
           <img *ngFor="let s of slides; let i=index" [src]="s.url" [alt]="s.title" class="thumb" [class.active]="i===cur" (click)="cur=i">
         </div>
         <div class="wa-cta">
-          <a href="https://wa.me/5437641653757" target="_blank" class="btn-green">📞 ¿Te convenció? Consultá por WhatsApp</a>
+          <a href="https://wa.me/5493764165357" target="_blank" class="btn-green">📞 ¿Te convenció? Consultá por WhatsApp</a>
         </div>
       </div>
     </section>
@@ -65,7 +65,6 @@ export class GaleriaComponent {
     {url:'assets/imgs/loteo_area_verde_9.jpeg',title:'Área verde',desc:'Amplias áreas verdes integradas al proyecto'},
     {url:'assets/imgs/loteo_biodiversidad_10.jpeg',title:'Biodiversidad',desc:'Flora y fauna autóctona de Misiones'},
     {url:'assets/imgs/loteo_espacios_naturales_11.jpeg',title:'Espacios naturales',desc:'Paisaje misionero único con biodiversidad natural'},
-    {url:'assets/imgs/loteo_ubicacion_estrategica_12.jpeg',title:'Ubicación estratégica',desc:'Conectividad perfecta entre naturaleza y servicios'},
   ];
   prev(){ this.cur=(this.cur-1+this.slides.length)%this.slides.length; }
   next(){ this.cur=(this.cur+1)%this.slides.length; }

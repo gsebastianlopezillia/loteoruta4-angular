@@ -33,7 +33,7 @@ interface Lote { num:number; dim:string; estado:EstadoLote; usd?:number; }
               <p class="usd">USD {{precioUSD(l).toLocaleString('en-US')}}</p>
               <p class="dim">{{l.dim}}</p>
               <div class="actions">
-                <a href="https://wa.me/5437641653757?text=Hola!+Quiero+reservar+el+Lote+{{l.num}}" target="_blank" class="btn-green btn-r" (click)="analytics.trackWhatsAppClick('lote_card')">
+                <a href="https://wa.me/5493764165357?text=Hola!+Quiero+reservar+el+Lote+{{l.num}}" target="_blank" class="btn-green btn-r" (click)="analytics.trackWhatsAppClick('lote_card')">
                   <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.832 16.568a1 1 0 0 0 1.213-.303l.355-.465A2 2 0 0 1 17 15h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2A18 18 0 0 1 2 4a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-.8 1.6l-.468.351a1 1 0 0 0-.292 1.233 14 14 0 0 0 6.392 6.384"></path></svg>
                   Reservar
                 </a>
@@ -57,7 +57,7 @@ interface Lote { num:number; dim:string; estado:EstadoLote; usd?:number; }
               </div>
             </div>
             <p class="disclaimer">* Precio aproximado, varía según cotización USD y UVA.</p>
-            <a href="https://wa.me/5437641653757" target="_blank" class="btn-green" style="margin-top:16px;justify-content:center;display:flex" (click)="analytics.trackWhatsAppClick('calculadora')">Consultar por WhatsApp</a>
+            <a href="https://wa.me/5493764165357" target="_blank" class="btn-green" style="margin-top:16px;justify-content:center;display:flex" (click)="analytics.trackWhatsAppClick('calculadora')">Consultar por WhatsApp</a>
           </div>
         </div>
       </div>
