@@ -31,7 +31,7 @@ jobs:
         run: npm ci --legacy-peer-deps
 
       - name: Build
-        run: npm run build
+        run: npm run build -- --base-href /loteoruta4-angular/
 
       - name: Add .nojekyll
         run: touch dist/loteo-ruta4/browser/.nojekyll
