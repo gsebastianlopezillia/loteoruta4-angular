@@ -13,7 +13,8 @@
       "Bash(cmd.exe /c \"taskkill /F /IM node.exe\")",
       "Read(//c/loteoruta4/**)",
       "Read(//c/loteoruta4/.github/**)",
-      "Read(//c/loteoruta4/.github/workflows/**)"
+      "Read(//c/loteoruta4/.github/workflows/**)",
+      "Bash(npm install:*)"
     ]
   }
 }

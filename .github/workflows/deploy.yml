@@ -28,7 +28,7 @@ jobs:
           cache: 'npm'
 
       - name: Install dependencies
-        run: npm ci
+        run: npm ci --legacy-peer-deps
 
       - name: Build
         run: npm run build
@@ -40,8 +40,6 @@ jobs:
         run: |
           echo "=== Build directory contents ==="
           ls -la dist/loteo-ruta4/browser/ | head -25
-          echo ""
-          echo "=== Checking for required files ==="
           test -f dist/loteo-ruta4/browser/.nojekyll && echo "✓ .nojekyll exists" || echo "✗ .nojekyll missing"
           test -f dist/loteo-ruta4/browser/index.html && echo "✓ index.html exists" || echo "✗ index.html missing"
 
