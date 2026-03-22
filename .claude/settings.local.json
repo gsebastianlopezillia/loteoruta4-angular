@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(for f:*)",
+      "Bash(do echo:*)",
+      "Read(//c/Proyectos/loteo-ruta4/**)",
+      "Bash(done)",
+      "Bash(xargs sed:*)",
+      "Bash(grep -l 'export class' C:/Proyectos/loteo-ruta4/src/app/components/**/*.ts)",
+      "Read(//c/nvm4w/nodejs/**)",
+      "mcp__Claude_Preview__preview_start",
+      "Bash(taskkill /F /IM node.exe)",
+      "Bash(cmd.exe /c \"taskkill /F /IM node.exe\")",
+      "Read(//c/loteoruta4/**)",
+      "Read(//c/loteoruta4/.github/**)",
+      "Read(//c/loteoruta4/.github/workflows/**)"
+    ]
+  }
+}

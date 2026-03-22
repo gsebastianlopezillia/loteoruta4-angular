@@ -1,6 +1,6 @@
 # Loteo Ruta 4 — Clon Angular 17
 
-Clon fiel del sitio [loteoruta4.com](https://loteoruta4.com) construido con **Angular 17 standalone components**.
+Construido con **Angular 17 standalone components**.
 
 ## Instalación y uso
 
@@ -29,7 +29,6 @@ npm run build      # dist/loteo-ruta4/
 
 ## Personalización rápida
 
-- **WhatsApp:** buscar `5437641653757` en todos los `.ts`
 - **Precios:** `lotes.component.ts` → array `lotes`
 - **Imágenes:** `galeria.component.ts` → array `slides` (reemplazar Unsplash por tus fotos reales)
 - **Colores:** `src/styles/global.scss` → variables `:root`
