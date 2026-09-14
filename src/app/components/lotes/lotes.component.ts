@@ -292,11 +292,11 @@ export class LotesComponent implements OnInit {
     { num: 7, dim: '12×80', m2: 1000, estado: 'vendido', etapa: 1, shape: '4,13 56,13 56,23 4,23' },
     { num: 8, dim: '12×80', m2: 1000, estado: 'vendido', etapa: 1, shape: '4,13 56,13 56,23 4,23' },
     { num: 9, dim: '12×80', m2: 1000, estado: 'vendido', etapa: 1, shape: '4,13 56,13 56,23 4,23' },
-    { num: 10, dim: '12×80', m2: 1000, estado: 'disponible', usd: 10000, etapa: 1, shape: '4,13 56,13 56,23 4,23' },
-    { num: 11, dim: '12×80', m2: 1000, estado: 'vendido', etapa: 1, shape: '4,13 56,13 56,23 4,23' },
-    { num: 12, dim: '12×80', m2: 1000, estado: 'disponible', usd: 10000, etapa: 1, shape: '4,13 56,13 56,23 4,23' },
-    { num: 13, dim: '12×80', m2: 1000, estado: 'disponible', usd: 10000, etapa: 1, shape: '4,13 56,13 56,23 4,23' },
-    { num: 14, dim: '12×80', m2: 1000, estado: 'reservado', usd: 6000, etapa: 1, shape: '4,13 56,13 56,23 4,23' },
+    { num: 10, dim: '12.50×78.84', m2: 985.33, estado: 'disponible', usd: 10000, etapa: 1, shape: '4,13 56,13 56,23 4,23' },
+    { num: 11, dim: '12.50×79.09', m2: 988.46, estado: 'vendido', etapa: 1, shape: '4,13 56,13 56,23 4,23' },
+    { num: 12, dim: '12.50×79.34', m2: 991.59, estado: 'disponible', usd: 10000, etapa: 1, shape: '4,13 56,13 56,23 4,23' },
+    { num: 13, dim: '12.50×79.58', m2: 994.65, estado: 'disponible', usd: 10000, etapa: 1, shape: '4,13 56,13 56,23 4,23' },
+    { num: 14, dim: '12.50×79.83', m2: 997.71, estado: 'reservado', usd: 6000, etapa: 1, shape: '4,13 56,13 56,23 4,23' },
 
     // --- ETAPA 2 (Manzana E) ---
     // Lotes 1 al 6: Formas geométricas reales según plano catastral (Manzana E)
