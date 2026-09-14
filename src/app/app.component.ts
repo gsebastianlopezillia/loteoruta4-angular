@@ -10,6 +10,7 @@ import { GaleriaComponent } from './components/galeria/galeria.component';
 import { ReviewsComponent } from './components/reviews/reviews.component';
 import { FaqComponent } from './components/faq/faq.component';
 import { VideoComponent } from './components/video/video.component';
+import { Modelo3dComponent } from './components/modelo3d/modelo3d.component';
 import { FooterComponent } from './components/footer/footer.component';
 import { WhatsappBtnComponent } from './components/whatsapp-btn/whatsapp-btn.component';
 
@@ -21,7 +22,7 @@ import { WhatsappBtnComponent } from './components/whatsapp-btn/whatsapp-btn.com
     // GarantiasComponent,
     UbicacionComponent, LotesComponent,
     FeaturesComponent, GaleriaComponent, ReviewsComponent,
-    FaqComponent, VideoComponent, FooterComponent, WhatsappBtnComponent
+    FaqComponent, VideoComponent, Modelo3dComponent, FooterComponent, WhatsappBtnComponent
   ],
   template: `
     <app-navbar></app-navbar>
@@ -30,6 +31,7 @@ import { WhatsappBtnComponent } from './components/whatsapp-btn/whatsapp-btn.com
     <app-ubicacion></app-ubicacion>
     <app-galeria></app-galeria>
     <app-video></app-video>
+    <app-modelo3d></app-modelo3d>
     <app-faq></app-faq>
     <app-features></app-features>
     <app-reviews></app-reviews>
