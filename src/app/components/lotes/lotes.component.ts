@@ -28,13 +28,13 @@ interface Lote {
         <!-- Selector de Etapas -->
         <div class="tabs-container">
           <button class="tab-btn" [class.active]="etapaSeleccionada === 2" (click)="setEtapa(2)">
-            <span class="tab-tag">🚀 ¡Nuevo Lanzamiento!</span>
+            <span class="tab-tag">🚀 ¡Nuevo Lanzamiento · En Preventa!</span>
             <span class="tab-title">Etapa 2 · Manzana E</span>
-            <span class="tab-desc">20 Lotes · desde USD 5.500</span>
+            <span class="tab-desc">20 Lotes · Precios de preventa desde USD 5.500</span>
           </button>
           <button class="tab-btn" [class.active]="etapaSeleccionada === 1" (click)="setEtapa(1)">
             <span class="tab-tag tag-orange">⏳ Últimas 3 unidades</span>
-            <span class="tab-title">Etapa 1 · 1000 m²</span>
+            <span class="tab-title">Etapa 1 · Manzana B</span>
             <span class="tab-desc">Lotes Sobre Ruta · USD 10.000</span>
           </button>
         </div>
