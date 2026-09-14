@@ -70,10 +70,16 @@ interface Lote {
               <p class="ars" *ngIf="!cargando">$ {{precioARS(l)}}</p>
               <p class="ars cargando" *ngIf="cargando">Cotizando...</p>
               <p class="usd">USD {{precioUSD(l).toLocaleString('en-US')}}</p>
-              <p class="dim">
-                {{l.dim}}
+              <div class="dim-row">
+                <span class="dim-badge">
+                  <svg class="dim-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M21.3 8.7 8.7 21.3c-1 1-2.5 1-3.4 0l-2.6-2.6c-1-1-1-2.5 0-3.4L15.3 2.7c1-1 2.5-1 3.4 0l2.6 2.6c1 1 1 2.5 0 3.4Z"/>
+                    <path d="m14.5 3.5 2 2"/><path d="m11.5 6.5 2 2"/><path d="m8.5 9.5 2 2"/><path d="m5.5 12.5 2 2"/>
+                  </svg>
+                  {{formatDim(l.dim)}}
+                </span>
                 <span class="tag-irregular" *ngIf="l.dim.includes('irregular')">Forma irregular</span>
-              </p>
+              </div>
               <div class="actions">
                 <a [href]="whatsappLink(l)" target="_blank" class="btn-green btn-r" (click)="analytics.trackWhatsAppClick('lote_card')">
                   <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.832 16.568a1 1 0 0 0 1.213-.303l.355-.465A2 2 0 0 1 17 15h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2A18 18 0 0 1 2 4a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-.8 1.6l-.468.351a1 1 0 0 0-.292 1.233 14 14 0 0 0 6.392 6.384"></path></svg>
@@ -103,7 +109,12 @@ interface Lote {
               </div>
               <div>
                 <h3 style="margin-bottom:2px">Simulador — Lote {{sel.num}} {{sel.manzana ? '(Manzana ' + sel.manzana + ')' : '(Etapa 1)'}}</h3>
-                <p class="modal-lot-info">{{formatM2(sel.m2)}} m² · {{sel.dim}}</p>
+                <p class="modal-lot-info">
+                  <span class="modal-m2">{{formatM2(sel.m2)}} m²</span>
+                  <span class="modal-sep">·</span>
+                  <span class="modal-dim">{{formatDim(sel.dim)}}</span>
+                  <span class="tag-irregular" *ngIf="sel.dim.includes('irregular')">Forma irregular</span>
+                </p>
               </div>
             </div>
             <p class="mprecio">Precio total: <strong>$ {{precioARS(sel)}}</strong> <span class="usd-ref">(USD {{precioUSD(sel).toLocaleString('en-US')}})</span></p>
@@ -146,7 +157,7 @@ interface Lote {
     .stamp-nodisponible { background:#7f8c8d; font-size:0.95rem; white-space:nowrap; }
     .lote-top { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:16px; }
     h3 { font-family:'Montserrat',sans-serif; font-size:1.3rem; font-weight:800; color:#fff; }
-    .m2 { font-size:0.85rem; color:#777; margin-top:2px; }
+    .m2 { font-family:'Montserrat',sans-serif; font-size:0.95rem; font-weight:700; color:#2ecc71; margin-top:4px; letter-spacing:0.2px; }
     .lot-shape { width:64px; height:36px; display:flex; align-items:center; justify-content:center; }
     .lot-shape svg { width:100%; height:100%; transition:transform 0.25s; filter:drop-shadow(0 0 6px rgba(46,204,113,0.15)); }
     .lote-card:hover .lot-shape svg { transform:scale(1.1); }
@@ -154,8 +165,10 @@ interface Lote {
     .usd { font-size:0.82rem; color:#888; margin-bottom:2px; }
     .cargando { color:#555; font-size:1rem; }
     .usd-ref { font-size:0.8rem; color:#666; font-weight:400; }
-    .dim { font-size:0.82rem; color:#666; margin-bottom:20px; display:flex; align-items:center; flex-wrap:wrap; gap:6px; }
-    .tag-irregular { background:rgba(241,196,15,0.12); color:#f1c40f; border:1px solid rgba(241,196,15,0.3); font-size:0.68rem; padding:1px 6px; border-radius:4px; font-weight:600; }
+    .dim-row { display:flex; align-items:center; flex-wrap:wrap; gap:8px; margin-top:8px; margin-bottom:20px; }
+    .dim-badge { display:inline-flex; align-items:center; gap:6px; font-size:0.88rem; font-weight:600; color:#f0f0f0; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.12); padding:4px 10px; border-radius:7px; letter-spacing:0.2px; }
+    .dim-icon { width:13px; height:13px; color:#2ecc71; flex-shrink:0; }
+    .tag-irregular { background:rgba(241,196,15,0.12); color:#f1c40f; border:1px solid rgba(241,196,15,0.3); font-size:0.72rem; padding:3px 8px; border-radius:6px; font-weight:600; }
     .actions { display:flex; gap:10px; flex-wrap:wrap; }
     .btn-r { font-size:0.82rem; padding:10px 14px; flex:1; justify-content:center; }
     .btn-s { font-size:0.82rem; padding:10px 14px; flex:1; justify-content:center; }
@@ -165,7 +178,10 @@ interface Lote {
     .close { position:absolute; top:16px; right:16px; background:#222; border:none; color:#fff; width:30px; height:30px; border-radius:50%; cursor:pointer; }
     .modal-header-shape { display:flex; align-items:center; gap:14px; margin-bottom:14px; }
     .modal-shape { width:54px; height:32px; flex-shrink:0; }
-    .modal-lot-info { font-size:0.8rem; color:#888; margin-top:2px; }
+    .modal-lot-info { font-size:0.92rem; color:#ccc; margin-top:4px; display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+    .modal-m2 { color:#2ecc71; font-weight:700; font-family:'Montserrat',sans-serif; }
+    .modal-dim { color:#fff; font-weight:600; }
+    .modal-sep { color:#555; }
     .mprecio { color:#aaa; font-size:0.9rem; margin-bottom:4px; }
     .mprecio strong { color:#fff; }
     .minfo { font-size:0.78rem; color:#666; margin-bottom:20px; }
@@ -227,6 +243,14 @@ export class LotesComponent implements OnInit {
 
   formatM2(m2: number): string {
     return m2.toLocaleString('es-AR', { minimumFractionDigits: 0, maximumFractionDigits: 2 });
+  }
+
+  formatDim(dim?: string): string {
+    if (!dim) return '';
+    const cleaned = dim.replace(/\s*irregular/gi, '').trim();
+    const withCommas = cleaned.replace(/(\d+)\.(\d+)/g, '$1,$2');
+    const formatted = withCommas.replace(/\s*[x×]\s*/g, ' × ');
+    return `${formatted} m`;
   }
 
   getShape(lote: Lote): string {
