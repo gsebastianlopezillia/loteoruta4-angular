@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { AnalyticsService } from '../../services/analytics.service';
 
-type EstadoLote = 'disponible' | 'vendido' | 'nodisponible';
+type EstadoLote = 'disponible' | 'vendido' | 'nodisponible' | 'reservado';
 interface Lote { num:number; dim:string; estado:EstadoLote; usd?:number; }
 
 @Component({
@@ -18,8 +18,10 @@ interface Lote { num:number; dim:string; estado:EstadoLote; usd?:number; }
         <div class="lotes-grid">
           <div class="lote-card" *ngFor="let l of visible"
                [class.vendido]="l.estado==='vendido'"
+               [class.reservado]="l.estado==='reservado'"
                [class.nodisponible]="l.estado==='nodisponible'">
             <div class="stamp stamp-vendido" *ngIf="l.estado==='vendido'">VENDIDO</div>
+            <div class="stamp stamp-reservado" *ngIf="l.estado==='reservado'">RESERVADO</div>
             <div class="stamp stamp-nodisponible" *ngIf="l.estado==='nodisponible'">RESERVADO</div>
             <div class="lote-top">
               <div><h3>Lote {{l.num}}</h3><p class="m2">1000 mts²</p></div>
@@ -66,12 +68,14 @@ interface Lote { num:number; dim:string; estado:EstadoLote; usd?:number; }
   styles: [`
     .lotes-section { background:#050505; }
     .lotes-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:20px; margin-bottom:32px; }
-    .lote-card { background:#111; border:1px solid #222; border-radius:16px; padding:24px; position:relative; transition:border-color 0.2s; }
-    .lote-card:hover:not(.vendido):not(.nodisponible){ border-color:#2ecc71; }
+    .lote-card { background:#111; border:1px solid #222; border-radius:16px; padding:24px; position:relative; transition:border-color 0.2s; min-height:220px; }
+    .lote-card:hover:not(.vendido):not(.nodisponible):not(.reservado){ border-color:#2ecc71; }
     .lote-card.vendido{ opacity:0.5; }
+    .lote-card.reservado{ opacity:0.65; }
     .lote-card.nodisponible{ opacity:0.5; }
     .stamp { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%) rotate(-20deg); color:#fff; font-family:'Montserrat',sans-serif; font-weight:900; padding:8px 20px; border-radius:8px; border:3px solid #fff; z-index:2; letter-spacing:2px; }
     .stamp-vendido { background:#c0392b; font-size:1.4rem; }
+    .stamp-reservado { background:#d35400; font-size:1.25rem; white-space:nowrap; }
     .stamp-nodisponible { background:#7f8c8d; font-size:0.95rem; white-space:nowrap; }
     .lote-top { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:16px; }
     h3 { font-family:'Montserrat',sans-serif; font-size:1.3rem; font-weight:800; color:#fff; }
@@ -110,7 +114,7 @@ export class LotesComponent implements OnInit {
   tipoCambio: number | null = null;
   cargando = true;
 
-  private readonly USD_PRECIO = 5000;
+  private readonly USD_PRECIO = 5500;
   private readonly TNA = 0.15;
 
   ngOnInit() {
@@ -153,13 +157,13 @@ export class LotesComponent implements OnInit {
     {num:7,  dim:'12×80', estado:'vendido'},
     {num:8,  dim:'12×80', estado:'vendido'},
     {num:9,  dim:'12×80', estado:'vendido'},
-    {num:10, dim:'12×80', estado:'disponible'},
+    {num:10, dim:'12×80', estado:'disponible', usd:5500},
     {num:11, dim:'12×80', estado:'vendido'},
-    {num:12, dim:'12×80', estado:'disponible'},
-    {num:13, dim:'12×80', estado:'disponible'},
-    {num:14, dim:'12×80', estado:'disponible', usd:6000},
+    {num:12, dim:'12×80', estado:'disponible', usd:5500},
+    {num:13, dim:'12×80', estado:'disponible', usd:5500},
+    {num:14, dim:'12×80', estado:'reservado', usd:6000},
   ];
-  private readonly orden: Record<EstadoLote, number> = { disponible:0, vendido:1, nodisponible:2 };
+  private readonly orden: Record<EstadoLote, number> = { disponible:0, reservado:1, vendido:2, nodisponible:3 };
   get sorted(){ return [...this.lotes].sort((a,b) => this.orden[a.estado] - this.orden[b.estado]); }
   get visible(){ return this.all ? this.sorted : this.sorted.slice(0,6); }
 }
