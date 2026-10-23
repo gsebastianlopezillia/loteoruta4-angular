@@ -2,18 +2,7 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { AnalyticsService } from '../../services/analytics.service';
-
-type EstadoLote = 'disponible' | 'vendido' | 'nodisponible' | 'reservado';
-interface Lote {
-  num: number;
-  dim: string;
-  estado: EstadoLote;
-  usd?: number;
-  m2: number;
-  etapa: number;
-  manzana?: string;
-  shape?: string;
-}
+import { Lote, EstadoLote, LOTES } from './lotes.data';
 
 @Component({
   selector: 'app-lotes',
@@ -24,20 +13,6 @@ interface Lote {
       <div class="container">
         <h2 class="section-title">Lotes <span class="green">Disponibles</span></h2>
         <p class="section-subtitle">Elegí el lote perfecto para tu proyecto de vida o inversión</p>
-
-        <!-- Selector de Etapas -->
-        <div class="tabs-container">
-          <button class="tab-btn" [class.active]="etapaSeleccionada === 2" (click)="setEtapa(2)">
-            <span class="tab-tag">🚀 ¡Nuevo Lanzamiento · En Preventa!</span>
-            <span class="tab-title">Etapa 2 · Manzana E</span>
-            <span class="tab-desc">20 Lotes · Precio preventa USD 5.500</span>
-          </button>
-          <button class="tab-btn" [class.active]="etapaSeleccionada === 1" (click)="setEtapa(1)">
-            <span class="tab-tag tag-orange">⏳ Últimas 4 unidades</span>
-            <span class="tab-title">Etapa 1 · Manzana B</span>
-            <span class="tab-desc">Lotes Sobre Ruta · desde USD 10.000</span>
-          </button>
-        </div>
 
         <div class="lotes-grid">
           <div class="lote-card" *ngFor="let l of visible"
@@ -51,12 +26,10 @@ interface Lote {
               <div>
                 <div class="lote-title-row">
                   <h3>Lote {{l.num}}</h3>
-                  <span class="badge-mz" *ngIf="l.manzana">Mz {{l.manzana}}</span>
-                  <span class="badge-mz badge-etapa1" *ngIf="!l.manzana">Etapa 1</span>
                 </div>
                 <p class="m2">{{formatM2(l.m2)}} m²</p>
               </div>
-              <div class="lot-shape" [title]="l.manzana ? 'Geometría Lote ' + l.num + ' (Mz ' + l.manzana + ')' : 'Geometría Lote ' + l.num">
+              <div class="lot-shape" [title]="'Geometría Lote ' + l.num">
                 <svg viewBox="0 0 60 36" fill="none">
                   <polygon [attr.points]="getShape(l)"
                            [attr.stroke]="getShapeStroke(l)"
@@ -82,7 +55,7 @@ interface Lote {
               </div>
               <div class="actions">
                 <a [href]="whatsappLink(l)" target="_blank" class="btn-green btn-r" (click)="analytics.trackWhatsAppClick('lote_card')">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.832 16.568a1 1 0 0 0 1.213-.303l.355-.465A2 2 0 0 1 17 15h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2A18 18 0 0 1 2 4a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-.8 1.6l-.468.351a1 1 0 0 0-.292 1.233 14 14 0 0 0 6.392 6.384"></path></svg>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.832 16.568a1 1 0 0 0 1.213-.303l.355-.465A2 2 0 0 1 17 15h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2A18 18 0 0 1 2 4a2 2 0 0 1 2-2h3a2 2 0 0 1-.8 1.6l-.468.351a1 1 0 0 0-.292 1.233 14 14 0 0 0 6.392 6.384"></path></svg>
                   Reservar
                 </a>
                 <button class="btn-outline btn-s" (click)="sel=l; analytics.trackCalculadoraLink(l.num, precioUSD(l))">Simular cuotas</button>
@@ -108,7 +81,7 @@ interface Lote {
                 </svg>
               </div>
               <div>
-                <h3 style="margin-bottom:2px">Simulador — Lote {{sel.num}} {{sel.manzana ? '(Manzana ' + sel.manzana + ')' : '(Etapa 1)'}}</h3>
+                <h3 style="margin-bottom:2px">Simulador — Lote {{sel.num}}</h3>
                 <p class="modal-lot-info">
                   <span class="modal-m2">{{formatM2(sel.m2)}} m²</span>
                   <span class="modal-sep">·</span>
@@ -134,17 +107,7 @@ interface Lote {
   `,
   styles: [`
     .lotes-section { background:#050505; }
-    .tabs-container { display:flex; justify-content:center; gap:16px; margin-bottom:36px; flex-wrap:wrap; }
-    .tab-btn { background:#111; border:1px solid #222; border-radius:14px; padding:14px 24px; text-align:left; cursor:pointer; transition:all 0.25s; min-width:250px; display:flex; flex-direction:column; gap:4px; position:relative; }
-    .tab-btn:hover { border-color:#333; background:#161616; }
-    .tab-btn.active { border-color:#2ecc71; background:rgba(46,204,113,0.06); box-shadow:0 0 20px rgba(46,204,113,0.12); }
-    .tab-tag { font-size:0.72rem; font-weight:700; color:#2ecc71; text-transform:uppercase; letter-spacing:0.5px; }
-    .tab-tag.tag-orange { color:#e67e22; }
-    .tab-title { font-family:'Montserrat',sans-serif; font-size:1.05rem; font-weight:800; color:#fff; }
-    .tab-desc { font-size:0.8rem; color:#888; }
     .lote-title-row { display:flex; align-items:center; gap:8px; }
-    .badge-mz { background:rgba(46,204,113,0.15); color:#2ecc71; border:1px solid rgba(46,204,113,0.3); font-size:0.68rem; font-weight:700; padding:2px 7px; border-radius:6px; letter-spacing:0.5px; text-transform:uppercase; }
-    .badge-mz.badge-etapa1 { background:rgba(255,255,255,0.08); color:#aaa; border-color:rgba(255,255,255,0.15); }
     .lotes-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:20px; margin-bottom:32px; }
     .lote-card { background:#111; border:1px solid #222; border-radius:16px; padding:24px; position:relative; transition:border-color 0.2s; min-height:220px; }
     .lote-card:hover:not(.vendido):not(.nodisponible):not(.reservado){ border-color:#2ecc71; }
@@ -189,7 +152,7 @@ interface Lote {
     .cuota-row { display:flex; justify-content:space-between; background:#1a1a1a; padding:10px 14px; border-radius:8px; color:#aaa; font-size:0.88rem; }
     .cv { color:#2ecc71; font-weight:700; }
     .disclaimer { font-size:0.72rem; color:#555; margin-top:12px; font-style:italic; }
-    @media(max-width:768px){ .lotes-grid{grid-template-columns:repeat(2,1fr)} .tab-btn{min-width:100%} }
+    @media(max-width:768px){ .lotes-grid{grid-template-columns:repeat(2,1fr)} }
     @media(max-width:500px){ .lotes-grid{grid-template-columns:1fr} }
   `]
 })
@@ -197,7 +160,7 @@ export class LotesComponent implements OnInit {
   private http = inject(HttpClient);
   analytics = inject(AnalyticsService);
 
-  etapaSeleccionada: number = 2;
+  etapaSeleccionada: number = 1;
   all = false;
   sel: Lote | null = null;
   tipoCambio: number | null = null;
@@ -205,6 +168,8 @@ export class LotesComponent implements OnInit {
 
   private readonly USD_PRECIO = 5500;
   private readonly TNA = 0.15;
+
+  lotes: Lote[] = LOTES;
 
   ngOnInit() {
     this.http.get<any>('https://api.bcra.gob.ar/estadisticascambiarias/v1.0/Cotizaciones/USD')
@@ -256,7 +221,7 @@ export class LotesComponent implements OnInit {
   getShape(lote: Lote): string {
     if (lote.shape) return lote.shape;
     if (lote.etapa === 1) return '4,13 56,13 56,23 4,23'; // 12x80 horizontal
-    return '6,9 54,9 54,27 6,27'; // 50x19.17 horizontal regular
+    return '6,9 54,9 54,27 6,27';
   }
 
   getShapeStroke(lote: Lote): string {
@@ -272,56 +237,12 @@ export class LotesComponent implements OnInit {
   }
 
   whatsappLink(lote: Lote): string {
-    const origen = lote.manzana ? `de la Manzana ${lote.manzana} (Etapa 2)` : `de la Etapa 1`;
-    return `https://wa.me/5493764165357?text=Hola!+Quiero+reservar+el+Lote+${lote.num}+${encodeURIComponent(origen)}`;
+    return `https://wa.me/5493764165357?text=Hola!+Quiero+reservar+el+Lote+${lote.num}`;
   }
 
   whatsappModalLink(lote: Lote): string {
-    const origen = lote.manzana ? `de la Manzana ${lote.manzana} (Etapa 2)` : `de la Etapa 1`;
-    return `https://wa.me/5493764165357?text=Hola!+Quiero+consultar+por+el+Lote+${lote.num}+${encodeURIComponent(origen)}`;
+    return `https://wa.me/5493764165357?text=Hola!+Quiero+consultar+por+el+Lote+${lote.num}`;
   }
-
-  lotes: Lote[] = [
-    // --- ETAPA 1 (Legacy) ---
-    { num: 1, dim: '12×80', m2: 1000, estado: 'nodisponible', etapa: 1, shape: '4,13 56,13 56,23 4,23' },
-    { num: 2, dim: '12×80', m2: 1000, estado: 'nodisponible', etapa: 1, shape: '4,13 56,13 56,23 4,23' },
-    { num: 3, dim: '12×80', m2: 1000, estado: 'nodisponible', etapa: 1, shape: '4,13 56,13 56,23 4,23' },
-    { num: 4, dim: '12×80', m2: 1000, estado: 'nodisponible', etapa: 1, shape: '4,13 56,13 56,23 4,23' },
-    { num: 5, dim: '12×80', m2: 1000, estado: 'vendido', etapa: 1, shape: '4,13 56,13 56,23 4,23' },
-    { num: 6, dim: '12×80', m2: 1000, estado: 'vendido', etapa: 1, shape: '4,13 56,13 56,23 4,23' },
-    { num: 7, dim: '12×80', m2: 1000, estado: 'vendido', etapa: 1, shape: '4,13 56,13 56,23 4,23' },
-    { num: 8, dim: '12×80', m2: 1000, estado: 'vendido', etapa: 1, shape: '4,13 56,13 56,23 4,23' },
-    { num: 9, dim: '12×80', m2: 1000, estado: 'vendido', etapa: 1, shape: '4,13 56,13 56,23 4,23' },
-    { num: 10, dim: '12.50×78.84', m2: 985.33, estado: 'disponible', usd: 10000, etapa: 1, shape: '4,13 56,13 56,23 4,23' },
-    { num: 11, dim: '12.50×79.09', m2: 988.46, estado: 'vendido', etapa: 1, shape: '4,13 56,13 56,23 4,23' },
-    { num: 12, dim: '12.50×79.34', m2: 991.59, estado: 'disponible', usd: 10000, etapa: 1, shape: '4,13 56,13 56,23 4,23' },
-    { num: 13, dim: '12.50×79.58', m2: 994.65, estado: 'disponible', usd: 10000, etapa: 1, shape: '4,13 56,13 56,23 4,23' },
-    { num: 14, dim: '12.50×79.83', m2: 997.71, estado: 'disponible', usd: 11000, etapa: 1, shape: '4,13 56,13 56,23 4,23' },
-
-    // --- ETAPA 2 (Manzana E) ---
-    // Lotes 1 al 6: Formas geométricas reales según plano catastral (Manzana E)
-    { num: 1, dim: '16×57 irregular', m2: 968.35, estado: 'disponible', usd: 5500, etapa: 2, manzana: 'E', shape: '20,4 40,7 40,32 20,32' },
-    { num: 2, dim: '17×53 irregular', m2: 792.74, estado: 'disponible', usd: 5500, etapa: 2, manzana: 'E', shape: '20,6 40,14 40,32 20,32' },
-    { num: 3, dim: '17×39 irregular', m2: 544.50, estado: 'disponible', usd: 5500, etapa: 2, manzana: 'E', shape: '20,13 40,22 40,32 20,32' },
-    { num: 4, dim: '17×48 irregular', m2: 945.25, estado: 'disponible', usd: 5500, etapa: 2, manzana: 'E', shape: '20,3 40,10 40,32 20,32' },
-    { num: 5, dim: '17×48 irregular', m2: 694.30, estado: 'disponible', usd: 5500, etapa: 2, manzana: 'E', shape: '20,8 40,18 40,32 20,32' },
-    { num: 6, dim: '38×33 irregular', m2: 644.57, estado: 'disponible', usd: 5500, etapa: 2, manzana: 'E', shape: '12,12 48,21 48,32 12,32' },
-    // Lotes 7 al 20: Lotes rectangulares regulares 50x19
-    { num: 7, dim: '19.17×50', m2: 958.50, estado: 'disponible', usd: 5500, etapa: 2, manzana: 'E', shape: '6,9 54,9 54,27 6,27' },
-    { num: 8, dim: '19.17×50', m2: 958.50, estado: 'disponible', usd: 5500, etapa: 2, manzana: 'E', shape: '6,9 54,9 54,27 6,27' },
-    { num: 9, dim: '19.17×50', m2: 958.50, estado: 'disponible', usd: 5500, etapa: 2, manzana: 'E', shape: '6,9 54,9 54,27 6,27' },
-    { num: 10, dim: '19.17×50', m2: 958.50, estado: 'disponible', usd: 5500, etapa: 2, manzana: 'E', shape: '6,9 54,9 54,27 6,27' },
-    { num: 11, dim: '19.16×50', m2: 958.00, estado: 'disponible', usd: 5500, etapa: 2, manzana: 'E', shape: '6,9 54,9 54,27 6,27' },
-    { num: 12, dim: '19.16×50', m2: 958.00, estado: 'disponible', usd: 5500, etapa: 2, manzana: 'E', shape: '6,9 54,9 54,27 6,27' },
-    { num: 13, dim: '19.16×50', m2: 958.00, estado: 'disponible', usd: 5500, etapa: 2, manzana: 'E', shape: '6,9 54,9 54,27 6,27' },
-    { num: 14, dim: '19.16×50', m2: 958.00, estado: 'disponible', usd: 5500, etapa: 2, manzana: 'E', shape: '6,9 54,9 54,27 6,27' },
-    { num: 15, dim: '19.17×50', m2: 958.50, estado: 'disponible', usd: 5500, etapa: 2, manzana: 'E', shape: '6,9 54,9 54,27 6,27' },
-    { num: 16, dim: '19.17×50', m2: 958.50, estado: 'disponible', usd: 5500, etapa: 2, manzana: 'E', shape: '6,9 54,9 54,27 6,27' },
-    { num: 17, dim: '19.17×50', m2: 958.50, estado: 'disponible', usd: 5500, etapa: 2, manzana: 'E', shape: '6,9 54,9 54,27 6,27' },
-    { num: 18, dim: '19.17×50', m2: 958.50, estado: 'disponible', usd: 5500, etapa: 2, manzana: 'E', shape: '6,9 54,9 54,27 6,27' },
-    { num: 19, dim: '19.17×50', m2: 958.50, estado: 'disponible', usd: 5500, etapa: 2, manzana: 'E', shape: '6,9 54,9 54,27 6,27' },
-    { num: 20, dim: '19.17×50', m2: 958.50, estado: 'disponible', usd: 5500, etapa: 2, manzana: 'E', shape: '6,9 54,9 54,27 6,27' },
-  ];
 
   private readonly orden: Record<EstadoLote, number> = { disponible: 0, reservado: 1, vendido: 2, nodisponible: 3 };
 
