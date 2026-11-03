@@ -26,7 +26,7 @@ export const LOTES: Lote[] = [
   { num: 11, dim: '12.50×79.09', m2: 988.46, estado: 'vendido', etapa: 1, shape: '4,13 56,13 56,23 4,23' },
   { num: 12, dim: '12.50×79.34', m2: 991.59, estado: 'disponible', usd: 5500, etapa: 1, shape: '4,13 56,13 56,23 4,23' },
   { num: 13, dim: '12.50×79.58', m2: 994.65, estado: 'disponible', usd: 5500, etapa: 1, shape: '4,13 56,13 56,23 4,23' },
-  { num: 14, dim: '12.50×79.83', m2: 997.71, estado: 'disponible', usd: 5500, etapa: 1, shape: '4,13 56,13 56,23 4,23' },
+  { num: 14, dim: '12.50×79.83', m2: 997.71, estado: 'disponible', usd: 6500, etapa: 1, shape: '4,13 56,13 56,23 4,23' },
 
   // --- ETAPA 2 (Manzana E) - Preservada para reactivación futura ---
   { num: 1, dim: '16×57 irregular', m2: 968.35, estado: 'disponible', usd: 5500, etapa: 2, manzana: 'E', shape: '20,4 40,7 40,32 20,32' },
