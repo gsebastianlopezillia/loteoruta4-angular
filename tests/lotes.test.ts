@@ -3,6 +3,14 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { LOTES } from '../src/app/components/lotes/lotes.data.ts';
+import {
+  FINANCING_DOWN_PAYMENT_RATIO,
+  FINANCING_INSTALLMENT_OPTIONS,
+  FINANCING_TNA,
+  calcCuotaInicialARS,
+  calcEntregaARS,
+  calcEntregaUSD,
+} from '../src/app/components/lotes/lotes.financing.ts';
 
 const ROOT_DIR = join(import.meta.dirname, '..');
 
@@ -47,5 +55,26 @@ describe('Loteo Ruta 4 - Validación de Precios y Ocultación de Etapa 2', () =>
     assert.doesNotMatch(lotesTs, /class="tabs-container"/, 'No debe existir el selector de etapas en el HTML activo');
     assert.doesNotMatch(lotesTs, /badge-etapa1/, 'No debe mostrar insignias residuales de etapa');
     assert.match(lotesTs, /etapaSeleccionada:\s*number\s*=\s*1;/, 'etapaSeleccionada debe inicializarse en 1');
+  });
+
+  test('La financiación vigente exige 50% de entrega y saldo en UVA (15% TNA) hasta 12 cuotas sin menciones a 24 cuotas', () => {
+    assert.equal(FINANCING_DOWN_PAYMENT_RATIO, 0.5);
+    assert.equal(FINANCING_TNA, 0.15);
+    assert.deepEqual([...FINANCING_INSTALLMENT_OPTIONS], [3, 6, 9, 12]);
+
+    assert.equal(calcEntregaUSD(5500), 2750);
+    assert.equal(calcEntregaARS(5500, 1000), 2750000);
+
+    // Saldo financiado: 2.750 USD * 1000 ARS = 2.750.000 ARS en 12 cuotas al 15% TNA (~248.210 ARS/mes)
+    const cuota12 = calcCuotaInicialARS(5500, 1000, 12);
+    assert.equal(cuota12, 248210);
+
+    const lotesTs = readFileSync(join(ROOT_DIR, 'src/app/components/lotes/lotes.component.ts'), 'utf-8');
+    const faqTs = readFileSync(join(ROOT_DIR, 'src/app/components/faq/faq.component.ts'), 'utf-8');
+    assert.doesNotMatch(lotesTs, /100%\s*financiado|24\s*cuotas/i);
+    assert.doesNotMatch(faqTs, /24\s*cuotas/i);
+    assert.match(lotesTs, /50%/);
+    assert.match(lotesTs, /hasta 12 cuotas/);
+    assert.match(faqTs, /50%.*12 cuotas.*UVA/s);
   });
 });

@@ -3,6 +3,13 @@ import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { AnalyticsService } from '../../services/analytics.service';
 import { Lote, EstadoLote, LOTES } from './lotes.data';
+import {
+  FINANCING_INSTALLMENT_OPTIONS,
+  FINANCING_TNA,
+  calcCuotaInicialARS,
+  calcEntregaARS,
+  calcEntregaUSD,
+} from './lotes.financing';
 
 @Component({
   selector: 'app-lotes',
@@ -91,14 +98,15 @@ import { Lote, EstadoLote, LOTES } from './lotes.data';
               </div>
             </div>
             <p class="mprecio">Precio total: <strong>$ {{precioARS(sel)}}</strong> <span class="usd-ref">(USD {{precioUSD(sel).toLocaleString('en-US')}})</span></p>
-            <p class="minfo">100% financiado en UVA · 15% TNA · hasta 24 cuotas</p>
+            <p class="mprecio">Entrega inicial (50%): <strong>$ {{entregaARS(sel)}}</strong> <span class="usd-ref">(USD {{entregaUSD(sel).toLocaleString('en-US')}})</span></p>
+            <p class="minfo">Saldo 50% financiado en UVA · 15% TNA · hasta 12 cuotas</p>
             <div class="cuotas">
-              <div *ngFor="let c of [6,12,18,24]" class="cuota-row">
+              <div *ngFor="let c of cuotasDisponibles" class="cuota-row">
                 <span>{{c}} cuotas</span>
                 <span class="cv" (click)="analytics.trackCalculadoraSimulate(sel.num, precioUSD(sel), c)">$ {{calcCuota(c, sel)}} / mes</span>
               </div>
             </div>
-            <p class="disclaimer">* Precio aproximado, varía según cotización USD y UVA.</p>
+            <p class="disclaimer">* Primera cuota estimada sobre el 50% restante. Cuotas ajustadas por UVA y cotización USD vigente.</p>
             <a [href]="whatsappModalLink(sel)" target="_blank" class="btn-green" style="margin-top:16px;justify-content:center;display:flex" (click)="analytics.trackWhatsAppClick('calculadora')">Consultar por WhatsApp</a>
           </div>
         </div>
@@ -167,7 +175,8 @@ export class LotesComponent implements OnInit {
   cargando = true;
 
   private readonly USD_PRECIO = 5500;
-  private readonly TNA = 0.15;
+  private readonly TNA = FINANCING_TNA;
+  readonly cuotasDisponibles = FINANCING_INSTALLMENT_OPTIONS;
 
   lotes: Lote[] = LOTES;
 
@@ -197,13 +206,16 @@ export class LotesComponent implements OnInit {
     return Math.round(this.precioUSD(lote) * this.tipoCambio).toLocaleString('es-AR');
   }
 
+  entregaUSD(lote: Lote): number { return calcEntregaUSD(this.precioUSD(lote)); }
+
+  entregaARS(lote: Lote): string {
+    if (!this.tipoCambio) return '—';
+    return calcEntregaARS(this.precioUSD(lote), this.tipoCambio).toLocaleString('es-AR');
+  }
+
   calcCuota(n: number, lote: Lote): string {
     if (!this.tipoCambio) return '—';
-    const total = this.precioUSD(lote) * this.tipoCambio;
-    const financiado = total;
-    const r = this.TNA / 12;
-    const cuota = financiado * r * Math.pow(1 + r, n) / (Math.pow(1 + r, n) - 1);
-    return Math.round(cuota).toLocaleString('es-AR');
+    return calcCuotaInicialARS(this.precioUSD(lote), this.tipoCambio, n, this.TNA).toLocaleString('es-AR');
   }
 
   formatM2(m2: number): string {
