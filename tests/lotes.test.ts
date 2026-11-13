@@ -77,4 +77,17 @@ describe('Loteo Ruta 4 - Validación de Precios y Ocultación de Etapa 2', () =>
     assert.match(lotesTs, /hasta 12 cuotas/);
     assert.match(faqTs, /50%.*12 cuotas.*UVA/s);
   });
+
+  test('Deben existir y publicarse privacidad.html y condiciones.html para cumplimiento de Meta App', () => {
+    const angularJson = readFileSync(join(ROOT_DIR, 'angular.json'), 'utf-8');
+    const privacidad = readFileSync(join(ROOT_DIR, 'src/privacidad.html'), 'utf-8');
+    const condiciones = readFileSync(join(ROOT_DIR, 'src/condiciones.html'), 'utf-8');
+
+    assert.match(angularJson, /src\/privacidad\.html/);
+    assert.match(angularJson, /src\/condiciones\.html/);
+    assert.match(privacidad, /Política de Privacidad/);
+    assert.match(privacidad, /5493764165357/);
+    assert.match(condiciones, /Condiciones del Servicio/);
+    assert.match(condiciones, /loteoruta4\.com/);
+  });
 });
