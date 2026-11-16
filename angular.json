@@ -17,7 +17,7 @@
             "browser": "src/main.ts",
             "polyfills": ["zone.js"],
             "tsConfig": "tsconfig.app.json",
-            "assets": ["src/favicon.ico", "src/favicon.svg", "src/privacidad.html", "src/condiciones.html", "src/assets", { "glob": "CNAME", "input": ".", "output": "/" }],
+            "assets": ["src/favicon.ico", "src/favicon.svg", "src/privacidad.html", "src/condiciones.html", "src/tiktokX7W6jy30SgNAbzlonwwDrzgUFv76TAn9.txt", "src/assets", { "glob": "CNAME", "input": ".", "output": "/" }],
             "styles": ["src/styles/global.scss"],
             "scripts": []
           },
