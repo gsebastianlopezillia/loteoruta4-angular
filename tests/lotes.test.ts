@@ -15,19 +15,21 @@ import {
 const ROOT_DIR = join(import.meta.dirname, '..');
 
 describe('Loteo Ruta 4 - Validación de Precios y Ocultación de Etapa 2', () => {
-  test('Los lotes disponibles de la Etapa 1 deben tener sus precios actualizados (5.500 USD y Lote 14 a 6.500 USD)', () => {
+  test('Los lotes disponibles de la Etapa 1 deben ser solo los 3 de 5.500 USD y el Lote 14 debe figurar vendido', () => {
     const etapa1 = LOTES.filter(l => l.etapa === 1);
     assert.equal(etapa1.length, 14, 'Etapa 1 debe tener exactamente 14 lotes');
 
     const disponibles = etapa1.filter(l => l.estado === 'disponible');
-    assert.equal(disponibles.length, 4, 'Deben existir exactamente 4 lotes disponibles en la Etapa 1');
+    assert.equal(disponibles.length, 3, 'Deben existir exactamente 3 lotes disponibles en la Etapa 1');
 
     const numerosDisponibles = disponibles.map(l => l.num).sort((a, b) => a - b);
-    assert.deepEqual(numerosDisponibles, [10, 12, 13, 14], 'Los lotes disponibles deben ser 10, 12, 13 y 14');
+    assert.deepEqual(numerosDisponibles, [10, 12, 13], 'Los lotes disponibles deben ser 10, 12 y 13');
 
-    const preciosEsperados: Record<number, number> = { 10: 5500, 12: 5500, 13: 5500, 14: 6500 };
+    const lote14 = etapa1.find(l => l.num === 14);
+    assert.equal(lote14?.estado, 'vendido', 'El lote 14 debe figurar como vendido');
+
     for (const lote of disponibles) {
-      assert.equal(lote.usd, preciosEsperados[lote.num], `El lote ${lote.num} debe costar ${preciosEsperados[lote.num]} USD`);
+      assert.equal(lote.usd, 5500, `El lote ${lote.num} debe costar 5500 USD`);
     }
   });
 
@@ -43,11 +45,12 @@ describe('Loteo Ruta 4 - Validación de Precios y Ocultación de Etapa 2', () =>
     assert.match(indexHtml, /desde USD 5\.500/, 'index.html debe reflejar el precio desde USD 5.500');
   });
 
-  test('hero.component.ts no debe contener menciones a Etapa 2 y debe promocionar los lotes desde USD 5.500', () => {
+  test('hero.component.ts no debe contener menciones a Etapa 2 y debe promocionar los últimos 3 lotes a USD 5.500', () => {
     const heroTs = readFileSync(join(ROOT_DIR, 'src/app/components/hero/hero.component.ts'), 'utf-8');
     assert.doesNotMatch(heroTs, /Etapa\s*2/i, 'hero.component.ts no debe mencionar "Etapa 2"');
     assert.doesNotMatch(heroTs, /Manzana\s*E/i, 'hero.component.ts no debe mencionar "Manzana E"');
-    assert.match(heroTs, /desde USD 5\.500/, 'hero.component.ts debe reflejar el precio desde USD 5.500');
+    assert.doesNotMatch(heroTs, /Últimos\s*4\s*lotes/i, 'hero.component.ts no debe mencionar 4 lotes');
+    assert.match(heroTs, /Últimos 3 lotes a USD 5\.500/, 'hero.component.ts debe reflejar los últimos 3 lotes a USD 5.500');
   });
 
   test('lotes.component.ts debe renderizar por defecto la Etapa 1 sin selector de etapas ni badges de Etapa 2', () => {
